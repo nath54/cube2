@@ -191,7 +191,7 @@ def main_jeu():
         for event in pygame.event.get():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
-                if event.key==K_ESCAPE: encour=False
+                if event.key==K_ESCAPE: encour_g=False
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
         t2=time.time()
