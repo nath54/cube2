@@ -23,6 +23,12 @@ cursor1,mask1=pygame.cursors.compile(("XXXXXXXXXXXXXXXX","X..............X","X..
 cursor_sizer1=((16,16),(9,8),cursor1,mask1)
 pygame.mouse.set_cursor(*cursor_sizer1)
 
+mon_joystick="joystick"
+nb_joysticks = pygame.joystick.get_count()
+if nb_joysticks > 0:
+	mon_joystick = pygame.joystick.Joystick(0)
+	mon_joystick.init()
+
 def rcl(): return (random.randint(50,200),random.randint(50,200),random.randint(50,200))
 
 class Mape:
@@ -55,7 +61,7 @@ class Mape:
                 else: self.mape[x,y]=1 #mur
         self.p1=False
         self.dp1=time.time()
-        self.tp1=1
+        self.tp1=1.5
     def update(self):
         if time.time()-self.dp1>=self.tp1:
             self.p1=not self.p1
@@ -121,6 +127,21 @@ def verif_keys(cube):
     if keys[K_DOWN]: cube.bouger("down")
     if keys[K_LEFT]: cube.bouger("left")
     if keys[K_RIGHT]: cube.bouger("right")
+    if nb_joysticks > 0:
+        #haut-bas
+        aa=float(mon_joystick.get_axis(1))
+        if aa > 0.5: aa=1
+        elif aa < -0.5 : aa=-1
+        else: aa=0 
+        if aa==-1: cube.bouger("up")
+        if aa==1: cube.bouger("down")
+        #haut-bas
+        aa=float(mon_joystick.get_axis(0))
+        if aa > 0.5: aa=1
+        elif aa < -0.5 : aa=-1
+        else: aa=0 
+        if aa==-1: cube.bouger("left")
+        if aa==1: cube.bouger("right")
     return cube
 
 def ecran_chargement():
