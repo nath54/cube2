@@ -12,7 +12,7 @@ def rx(x): return int(x/btex*tex)
 def ry(y): return int(y/btey*tey)
 
 fenetre=pygame.display.set_mode([tex,tey])
-pygame.display.set_caption("The adventure of the little cube")
+pygame.display.set_caption("Cube2")
 font1=pygame.font.SysFont("Arial",ry(17))
 font2=pygame.font.SysFont("Arial",ry(20))
 font3=pygame.font.SysFont("Arial",ry(30))
@@ -149,14 +149,34 @@ def ecran_chargement():
     fenetre.blit( font4.render("chargement...",True,(255,255,255)) , [tex/3,tey/3])
     pygame.display.update()
 
-def ecran_fini():
+def ecran_fin():
     fenetre.fill((0,0,0))
-    fenetre.blit( font4.render("Vous avez fini le jeu",True,(255,255,255)) , [tex/3,tey/3])
-    fenetre.blit( font4.render("Revenez y rejouer le plus vite possible",True,(255,255,255)) , [tex/3,tey/3])
-    fenetre.blit( font4.render("Appuyez sur echap pour quitter",True,(255,255,255)) , [tex/3,tey/3])
+    fenetre.blit( font3.render("Vous avez fini le jeu",True,(255,255,255)) , [rx(100),ry(250)])
+    fenetre.blit( font3.render("Revenez y rejouer le plus vite possible",True,(255,255,255)) , [rx(100),ry(300)])
+    fenetre.blit( font3.render("Appuyez sur espace pour quitter",True,(255,255,255)) , [rx(100),ry(400)])
     pygame.display.update()
+    encour_f=True
+    while encour_f:
+        for event in pygame.event.get():
+            if event.type==QUIT: exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_SPACE: encour_f=False
 
-def aff(cube,mape,cam,tc,fps,niv):
+def ecran_quit():
+    fenetre.fill((0,0,0))
+    fenetre.blit( font2.render("Vous avez quitté la partie",True,(255,255,255)) , [rx(50),ry(250)])
+    fenetre.blit( font2.render("Si vous avez ragé, ou que vous en avez assez de jouer à ce jeu",True,(255,255,255)) , [rx(50),ry(300)])
+    fenetre.blit( font2.render("Ce n'est pas grave, mais revenez jouer quand même ;)",True,(255,255,255)) , [rx(50),ry(350)])
+    fenetre.blit( font2.render("Appuyez sur espace pour quitter",True,(255,255,255)) , [rx(50),ry(400)])
+    pygame.display.update()
+    encour_f=True
+    while encour_f:
+        for event in pygame.event.get():
+            if event.type==QUIT: exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_SPACE: encour_f=False
+
+def aff(cube,mape,cam,tc,fps,niv,morts):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
@@ -170,7 +190,8 @@ def aff(cube,mape,cam,tc,fps,niv):
                 pygame.draw.rect(fenetre,cl,(cam[0]+x*tc,cam[1]+y*tc,tc,tc),0)    
     pygame.draw.rect(fenetre,cube.cl,(cam[0]+cube.px,cam[1]+cube.py,cube.tx,cube.ty),0)
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
-    fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(15)] )
+    fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(25)] )
+    fenetre.blit( font1.render("vous êtes mort : "+str(morts)+" fois",20,(255,255,255)), [tex-rx(200),ry(10)] )
     pygame.display.update()
 
 def cniv(tc,niv):
@@ -185,6 +206,7 @@ def main_jeu():
     ecran_chargement()
     mape,cube,cam=cniv(tc,niv)
     encour_g=True
+    morts=0
     fps=0
     while encour_g:
         t1=time.time()
@@ -195,6 +217,7 @@ def main_jeu():
             cube.px=cube.checkpoint[0]
             cube.py=cube.checkpoint[1]
             cube.vitx,cube.vity=0,0
+            morts+=1
         elif etat==True:
             if niv<100:
                 niv+=1
@@ -207,19 +230,21 @@ def main_jeu():
         #mape
         mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv)
+        aff(cube,mape,cam,tc,fps,niv,morts)
         #event
         for event in pygame.event.get():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
-                if event.key==K_ESCAPE: encour_g=False
+                if event.key==K_ESCAPE:
+                    encour_g=False
+                    ecran_quit()
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
         t2=time.time()
         tt=t2-t1
         if tt!=0: fps=int(1./tt)
 
-def menu():
+def aff_menu():
     fenetre.fill((0,0,0))
     fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
     fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
@@ -234,7 +259,13 @@ def menu():
     fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(370)] )
     btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
     fenetre.blit( font4.render("Jouer",20,(255,255,255)) , [rx(350),ry(520)] )
+    btn2=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(600),rx(200),ry(75)),0)
+    fenetre.blit( font4.render("quitter",20,(255,255,255)) , [rx(350),ry(620)] )
     pygame.display.update()
+    return btn,btn2
+
+def menu():
+    btn,btn2=aff_menu()
     encour=True
     while encour:
         for event in pygame.event.get():
@@ -243,7 +274,10 @@ def menu():
                 if event.key==K_ESCAPE: encour=False
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
-                if btn.collidepoint(pos): main_jeu()
+                if btn.collidepoint(pos):
+                    main_jeu()
+                    btn,btn2=aff_menu()
+                elif btn2.collidepoint(pos): exit()
 
 menu()
 
