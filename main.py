@@ -110,6 +110,10 @@ class Cube:
                         if mape.mape[x,y]==1: return False
                         if mape.mape[x,y]==2 and mape.p1: return False
                         if mape.fin==[x,y]: return True
+            if self.px<0: return False
+            if self.px+self.tx>mape.tx*tc: return False
+            if self.py<0: return False
+            if self.py+self.ty>mape.ty*tc: return False
             #physique
             if self.vitx>=self.decc: self.vitx-=self.decc
             if self.vitx>0 and self.vitx<self.decc: self.vitx=0
