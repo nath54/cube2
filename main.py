@@ -29,7 +29,7 @@ if nb_joysticks > 0:
 	mon_joystick = pygame.joystick.Joystick(0)
 	mon_joystick.init()
 
-def rcl(): return (random.randint(50,200),random.randint(50,200),random.randint(50,200))
+def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(50,200))
 
 class Mape:
     def __init__(self,niv):
@@ -40,18 +40,21 @@ class Mape:
         self.cls=(255-self.clm[0],255-self.clm[1],255-self.clm[2])
         self.mape=numpy.zeros([self.tx,self.ty],dtype=int)
         self.chem=[[random.randint(0,self.tx-1),random.randint(0,self.ty-1)]]
-        for x in range(random.randint(100*dif,1000*dif)):
-            c=self.chem[len(self.chem)-1]
-            ax,ay=0,0
-            if random.randint(0,1)==1: ax=random.randint(-1,1)
-            else: ay=random.randint(-1,1)
-            cx,cy=c[0]+ax,c[1]+ay
-            if cx < 0: cx=0
-            elif cx > self.tx-1: cx=self.tx-1
-            if cy < 0: cy=0
-            elif cy > self.ty-1: cy=self.ty-1
-            self.chem.append([cx,cy])
         self.deb=self.chem[0]
+        nbbranches=dif
+        for y in range(nbbranches):
+            self.chem.append( self.deb ) 
+            for x in range(random.randint(200*dif,1100*dif)):
+                c=self.chem[len(self.chem)-1]
+                ax,ay=0,0
+                if random.randint(0,1)==1: ax=random.randint(-1,1)
+                else: ay=random.randint(-1,1)
+                cx,cy=c[0]+ax,c[1]+ay
+                if cx < 0: cx=0
+                elif cx > self.tx-1: cx=self.tx-1
+                if cy < 0: cy=0
+                elif cy > self.ty-1: cy=self.ty-1
+                self.chem.append([cx,cy])
         self.fin=self.chem[len(self.chem)-1]
         for x in range(self.tx):
             for y in range(self.ty):
@@ -156,7 +159,20 @@ def ecran_chargement():
 def ecran_fin():
     fenetre.fill((0,0,0))
     fenetre.blit( font3.render("Vous avez fini le jeu",True,(255,255,255)) , [rx(100),ry(250)])
-    fenetre.blit( font3.render("Revenez y rejouer le plus vite possible",True,(255,255,255)) , [rx(100),ry(300)])
+    fenetre.blit( font3.render("Revenez jouer le plus vite possible",True,(255,255,255)) , [rx(100),ry(300)])
+    fenetre.blit( font3.render("Appuyez sur espace pour quitter",True,(255,255,255)) , [rx(100),ry(400)])
+    pygame.display.update()
+    encour_f=True
+    while encour_f:
+        for event in pygame.event.get():
+            if event.type==QUIT: exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_SPACE: encour_f=False
+
+def ecran_mort():
+    fenetre.fill((0,0,0))
+    fenetre.blit( font3.render("Vous avez perdu.",True,(255,255,255)) , [rx(100),ry(250)])
+    fenetre.blit( font3.render("Revenez jouer le plus vite possible",True,(255,255,255)) , [rx(100),ry(300)])
     fenetre.blit( font3.render("Appuyez sur espace pour quitter",True,(255,255,255)) , [rx(100),ry(400)])
     pygame.display.update()
     encour_f=True
@@ -218,10 +234,15 @@ def main_jeu():
         cube=verif_keys(cube)
         etat=cube.update(mape,tc)
         if etat==False:
-            cube.px=cube.checkpoint[0]
-            cube.py=cube.checkpoint[1]
-            cube.vitx,cube.vity=0,0
             morts+=1
+            if morts>=100:
+                encour=False
+                ecran_mort()
+                break
+            else:
+                cube.px=cube.checkpoint[0]
+                cube.py=cube.checkpoint[1]
+                cube.vitx,cube.vity=0,0
         elif etat==True:
             if niv<100:
                 niv+=1
@@ -259,8 +280,9 @@ def aff_menu():
     fenetre.blit( font2.render("Si il est vert, vous pouvez passer dessus",20,(255,255,255)) , [rx(120),ry(250)] )
     fenetre.blit( font2.render("Si il est rouger, vous mourrez",20,(255,255,255)) , [rx(120),ry(280)] )
     fenetre.blit( font2.render("Si vous terminez le niveau 100, vous avez fini le jeu",20,(255,255,255)) , [rx(100),ry(310)] )
-    fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(340)] )
-    fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(370)] )
+    fenetre.blit( font2.render("Par contre, si vous mourrez 100 fois, vous perdez la partie",20,(255,255,255)) , [rx(100),ry(340)] )
+    fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(370)] )
+    fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(400)] )
     btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
     fenetre.blit( font4.render("Jouer",20,(255,255,255)) , [rx(350),ry(520)] )
     btn2=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(600),rx(200),ry(75)),0)
