@@ -60,8 +60,12 @@ def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(
 dimg="images/"
 
 sa1=["skin4-1.png","skin4-2.png","skin4-3.png","skin4-4.png","skin4-5.png","skin4-6.png","skin4-7.png","skin4-8.png","skin4-9.png","skin4-10.png","skin4-11.png","skin4-12.png","skin4-13.png","skin4-12.png","skin4-11.png","skin4-10.png","skin4-9.png","skin4-8.png","skin4-7.png","skin4-6.png","skin4-5.png","skin4-4.png","skin4-3.png","skin4-2.png","skin4-1.png"]
-skins=[[["skin1.png"],0],[["skin2.png"],1],[["skin3.png"],2],[sa1,3],[sa1,4]]
-#0=imgs 1 = rarete
+sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-5.png","skin6-6.png","skin6-7.png","skin6-8.png","skin6-9.png","skin6-10.png","skin6-11.png","skin6-12.png","skin6-13.png","skin6-14.png","skin6-15.png","skin6-16.png","skin6-17.png","skin6-18.png","skin6-19.png","skin6-20.png"]
+sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
+skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[sa1,4,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
+[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180]
+]
+#0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
 
 skins_com=[]
@@ -210,21 +214,23 @@ class Cube:
         self.tan=0.1
         self.agl=0
         self.img=pygame.transform.rotate(self.imgs[self.an],self.agl)
+        self.rot=skins[skins_possedes[skin_equipe]][2]
+        self.ab=skins[skins_possedes[skin_equipe]][3]
     def bouger(self,aa,cube2):
         if time.time()-self.dk >= self.tk:
             self.dk=time.time()
             if aa=="up":
                 self.vity-=self.acc
-                self.agl=180
+                if self.rot: self.agl=180+self.ab
             elif aa=="down":
                 self.vity+=self.acc
-                self.agl=0
+                if self.rot: self.agl=0+self.ab
             elif aa=="left":
                 self.vitx-=self.acc
-                self.agl=270
+                if self.rot: self.agl=270+self.ab
             elif aa=="right":
                 self.vitx+=self.acc
-                self.agl=90
+                if self.rot: self.agl=90+self.ab
             self.img=pygame.transform.rotate(self.imgs[self.an],self.agl)
     def update(self,mape,tc,cube2):
         #animation
@@ -425,6 +431,7 @@ def main_jeu(skin_equipe,skins_possedes):
     encour_g=True
     morts=0
     fps=0
+    perdu=False
     while encour_g:
         t1=time.time()
         #cube
@@ -451,6 +458,7 @@ def main_jeu(skin_equipe,skins_possedes):
                 ecran_fin()
         if time.time()-tps1>=tpstot:
             encour=False
+            perdu=True
             ecran_mort()
             break
         cam=[-cube.px+tex/2,-cube.py+tey/2]
@@ -475,15 +483,17 @@ def main_jeu(skin_equipe,skins_possedes):
         t2=time.time()
         tt=t2-t1
         if tt!=0: fps=int(1./tt)
-    if niv < 25:    
-        sg=random.choice(skins_com)
-        txt="Vous avez gagné un skin commun !"
-        cltxt=cl_raretes[0]
-    elif niv < 50:
+    sg,txt,cltxt=None,None,None
+    if niv < 15:    
+        if perdu:
+            sg=random.choice(skins_com)
+            txt="Vous avez gagné un skin commun !"
+            cltxt=cl_raretes[0]
+    elif niv < 30:
         sg=random.choice(skins_rar)
         txt="Vous avez gagné un skin rare !"
         cltxt=cl_raretes[1]
-    elif niv < 75:
+    elif niv < 60:
         sg=random.choice(skins_epi)
         txt="Vous avez gagné un skin épique !"
         cltxt=cl_raretes[2]
@@ -495,21 +505,22 @@ def main_jeu(skin_equipe,skins_possedes):
         sg=random.choice(skins_div)
         txt="Vous avez gagné un skin divin !"
         cltxt=cl_raretes[4]
-    skins_possedes.append(sg)
-    skins_possedes=list(set(skins_possedes))
-    fenetre.fill((0,0,0))
-    fenetre.blit( font4.render(txt,True,cltxt) , [rx(50),ry(100)])
-    fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+skins[sg][0][0]),[rx(200),ry(200)]) , [rx(200),ry(150)] )
-    fenetre.blit( font3.render("Appuyez sur espace pour continuer",True,(255,255,255)) , [rx(100),ry(600)])
-    pygame.display.update()
-    encour=True
-    while encour:
-        for event in pygame.event.get():
-            if event.type==QUIT: exit()
-            elif event.type==KEYDOWN:
-                if event.key==K_SPACE: encour=False
-            elif event.type==MOUSEBUTTONUP:
-                encour=False
+    if sg!=None:
+        skins_possedes.append(sg)
+        skins_possedes=list(set(skins_possedes))
+        fenetre.fill((0,0,0))
+        fenetre.blit( font4.render(txt,True,cltxt) , [rx(50),ry(100)])
+        fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+skins[sg][0][0]),[rx(200),ry(200)]) , [rx(200),ry(150)] )
+        fenetre.blit( font3.render("Appuyez sur espace pour continuer",True,(255,255,255)) , [rx(100),ry(600)])
+        pygame.display.update()
+        encour=True
+        while encour:
+            for event in pygame.event.get():
+                if event.type==QUIT: exit()
+                elif event.type==KEYDOWN:
+                    if event.key==K_SPACE: encour=False
+                elif event.type==MOUSEBUTTONUP:
+                    encour=False
     return skin_equipe,skins_possedes
     
 def aff_menu(men,skin_equipe,skins_possedes):
