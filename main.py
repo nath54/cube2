@@ -26,8 +26,6 @@ for ff in f[1].split(cacc):
     try: skins_possedes.append( int(ff) )
     except: pass
 
-print(skin_equipe,skins_possedes)
-
 pygame.init()
 btex,btey=1280/1.5,1024/1.5
 io = pygame.display.Info()
@@ -36,6 +34,9 @@ tex,tey=int(mtex/1.5),int(mtey/1.5)
 
 def rx(x): return int(x/btex*tex)
 def ry(y): return int(y/btey*tey)
+
+def rxx(x): return float(float(x)/float(btex)*float(tex))
+def ryy(y): return float(float(y)/float(btey)*float(tey))
 
 fenetre=pygame.display.set_mode([tex,tey])
 pygame.display.set_caption("Cube2")
@@ -57,13 +58,18 @@ if nb_joysticks > 0:
 
 def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(50,200))
 
+tpage=int((rx(750)/ry(150))*3)
+print(tpage)
+
 dimg="images/"
 
 sa1=["skin4-1.png","skin4-2.png","skin4-3.png","skin4-4.png","skin4-5.png","skin4-6.png","skin4-7.png","skin4-8.png","skin4-9.png","skin4-10.png","skin4-11.png","skin4-12.png","skin4-13.png","skin4-12.png","skin4-11.png","skin4-10.png","skin4-9.png","skin4-8.png","skin4-7.png","skin4-6.png","skin4-5.png","skin4-4.png","skin4-3.png","skin4-2.png","skin4-1.png"]
 sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-5.png","skin6-6.png","skin6-7.png","skin6-8.png","skin6-9.png","skin6-10.png","skin6-11.png","skin6-12.png","skin6-13.png","skin6-14.png","skin6-15.png","skin6-16.png","skin6-17.png","skin6-18.png","skin6-19.png","skin6-20.png"]
 sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
-skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[sa1,4,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
-[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180]
+sa4=["skin11-1.png","skin11-2.png","skin11-3.png","skin11-4.png","skin11-5.png","skin11-6.png","skin11-5.png","skin11-4.png","skin11-3.png","skin11-2.png"]
+sa5=["skin13-1.png","skin13-2.png","skin13-3.png","skin13-4.png","skin13-5.png"]
+skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
+[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0]
 ]
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
@@ -190,9 +196,9 @@ class Cube:
         self.tbg=0.01
         self.vitx=0.
         self.vity=0.
-        self.acc=0.1
-        self.decc=0.01
-        self.vitmax=5
+        self.acc=rxx(0.1)
+        self.decc=rxx(0.01)
+        self.vitmax=rxx(5)
         self.dk=time.time()
         self.tk=0.01
         self.checkpoint=[self.px,self.py]
@@ -402,7 +408,7 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot):
     #pygame.draw.rect(fenetre,cube.cl,(cam[0]+cube.px,cam[1]+cube.py,cube.tx,cube.ty),0)
     fenetre.blit( cube.img , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)] )
     #ui
-    pygame.draw.rect(fenetre,(255,int((tpstot-(time.time()-tps1))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps1))/tpstot*tex),ry(10)),0)
+    pygame.draw.rect(fenetre,(255-int((tpstot-(time.time()-tps1))/tpstot*255),int((tpstot-(time.time()-tps1))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps1))/tpstot*tex),ry(10)),0)
     pygame.draw.rect(fenetre,(250,0,0),(rx(100),ry(15),int(cube.vie/cube.vie_tot*rx(200)),ry(15)),0)
     pygame.draw.rect(fenetre,(0,0,0),(rx(100),ry(15),rx(200),ry(15)),1)
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
@@ -523,8 +529,8 @@ def main_jeu(skin_equipe,skins_possedes):
                     encour=False
     return skin_equipe,skins_possedes
     
-def aff_menu(men,skin_equipe,skins_possedes):
-    btn,btn2,btn3=None,None,None
+def aff_menu(men,skin_equipe,skins_possedes,ps,an):
+    btn,btn2,btn3,btn4,btn5=None,None,None,None,None
     bts=[]
     for x in range(50): bts.append( None )
     fenetre.fill((0,0,0))
@@ -552,30 +558,43 @@ def aff_menu(men,skin_equipe,skins_possedes):
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
         fenetre.blit( font3.render("skins possedes :",20,(250,250,250)) , [rx(20),ry(110)] )
         fenetre.blit( font3.render("skin équipé :",20,(250,250,250)) , [rx(200),ry(30)] )
-        fenetre.blit( pygame.transform.scale(   pygame.image.load(dimg+skins[skins_possedes[skin_equipe]][0][0]) , [rx(100),ry(100)]) , [rx(400),ry(30)])
-        pygame.draw.rect(fenetre,cl_raretes[skins[skins_possedes[skin_equipe]][1]],(rx(400),ry(30),rx(100),ry(100)),2)
-        pygame.draw.rect(fenetre,(50,50,50),(rx(50),ry(150),rx(750),ry(450)),0)
-        xx,yy=rx(50),ry(150)
-        tcx,tcy=rx(150),ry(150)
-        for s in skins_possedes:
-            #img
-            bts[skins_possedes.index(s)]=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+skins[s][0][0]),[tcx,tcy]) , [xx,yy] )
-            pygame.draw.rect(fenetre,cl_raretes[skins[s][1]],(xx,yy,tcx,tcy),2)
-            #coordonée image
-            xx+=tcx
-            if xx>=rx(750):
-                xx=rx(50)
-                yy+=tcy
+        fenetre.blit( pygame.transform.scale(   pygame.image.load(dimg+skins[skins_possedes[skin_equipe]][0][an]) , [ry(150),ry(150)]) , [rx(430),ry(5)])
+        pygame.draw.rect(fenetre,cl_raretes[skins[skins_possedes[skin_equipe]][1]],(rx(430),ry(5),ry(150),ry(150)),2)
+        pygame.draw.rect(fenetre,(50,50,50),(rx(50),ry(180),rx(750),ry(450)),0)
+        xx,yy=rx(50),ry(180)
+        tcx,tcy=ry(150),ry(150)
+        for x in range(ps,ps+tpage):
+            if x >= 0 and x < len(skins_possedes):
+                s=skins_possedes[x]
+                #img
+                bts[skins_possedes.index(s)]=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+skins[s][0][0]),[tcx,tcy]) , [xx,yy] )
+                pygame.draw.rect(fenetre,cl_raretes[skins[s][1]],(xx,yy,tcx,tcy),2)
+                #coordonée image
+                xx+=tcx
+                if xx>=rx(750):
+                    xx=rx(50)
+                    yy+=tcy
+        btn4=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f1.png"),[rx(50),ry(100)]) , [tex-rx(50),ry(300)])
+        btn5=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f2.png"),[rx(50),ry(100)]) , [0,ry(300)])
     pygame.display.update()
-    return btn,btn2,btn3,bts
+    return btn,btn2,btn3,btn4,btn5,bts
 
 def menu(skin_equipe,skins_possedes):
     men=0
     needtoaff=True
+    ps=0
+    an=0
+    tan=0.1
+    dan=time.time()
     encour=True
     while encour:
+        if time.time()-dan>=tan and len(skins[skins_possedes[skin_equipe]][0])>1:
+            dan=time.time()
+            an+=1
+            if an >= len(skins[skins_possedes[skin_equipe]][0]): an=0
+            needtoaff=True
         if needtoaff:
-            btn,btn2,btn3,bts=aff_menu(men,skin_equipe,skins_possedes)
+            btn,btn2,btn3,btn4,btn5,bts=aff_menu(men,skin_equipe,skins_possedes,ps,an)
             needtoaff=False
         for event in pygame.event.get():
             if event.type==QUIT: exit()
@@ -591,10 +610,14 @@ def menu(skin_equipe,skins_possedes):
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
                     else: men=0
+                elif btn4!=None and btn4.collidepoint(pos):
+                    if len(skins_possedes)>ps+tpage: ps+=tpage
+                elif btn5!=None and btn5.collidepoint(pos):
+                    if ps>=tpage: ps-=tpage
                 for b in bts:
                     if b!=None and b.collidepoint(pos):
                         skin_equipe=skins_possedes.index(skins_possedes[bts.index(b)])
-                        print(skin_equipe)
+                        an=0
                 needtoaff=True
 
 menu(skin_equipe,skins_possedes)
