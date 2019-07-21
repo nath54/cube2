@@ -68,8 +68,13 @@ sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-
 sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
 sa4=["skin11-1.png","skin11-2.png","skin11-3.png","skin11-4.png","skin11-5.png","skin11-6.png","skin11-5.png","skin11-4.png","skin11-3.png","skin11-2.png"]
 sa5=["skin13-1.png","skin13-2.png","skin13-3.png","skin13-4.png","skin13-5.png"]
+sa6=["skin14-1.png","skin14-2.png","skin14-3.png","skin14-4.png","skin14-5.png","skin14-6.png","skin14-7.png","skin14-8.png","skin14-9.png"]
+sa7=["skin15-1.png","skin15-2.png","skin15-3.png","skin15-4.png","skin15-5.png","skin15-6.png","skin15-7.png","skin15-8.png","skin15-9.png","skin15-10.png","skin15-11.png","skin15-12.png","skin15-13.png"]
+sa8=["skin16-1.png","skin16-2.png","skin16-3.png","skin16-4.png","skin16-5.png"]
+sa9=["skin17-1.png","skin17-2.png","skin17-3.png","skin17-4.png","skin17-5.png"]
 skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
-[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0]
+[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0],
+[sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0]
 ]
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
@@ -424,7 +429,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     cube2.tpbg=1+((30-mape.dif)/30*1)
     cam=[-cube.px+tex/2,-cube.py+tey/2]
     tps1=time.time()
-    tpstot=60+60*mape.dif
+    tpstot=60+40*mape.dif
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
 def main_jeu(skin_equipe,skins_possedes):
@@ -451,6 +456,7 @@ def main_jeu(skin_equipe,skins_possedes):
             cube.py=cube.checkpoint[1]
             cube.vitx,cube.vity=0,0
             cube.isgrap=False
+            time.sleep(0.1)
             cube2.reload(cube)
         elif etat==True:
             if niv<100:
@@ -560,6 +566,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an):
         fenetre.blit( font3.render("skin équipé :",20,(250,250,250)) , [rx(200),ry(30)] )
         fenetre.blit( pygame.transform.scale(   pygame.image.load(dimg+skins[skins_possedes[skin_equipe]][0][an]) , [ry(150),ry(150)]) , [rx(430),ry(5)])
         pygame.draw.rect(fenetre,cl_raretes[skins[skins_possedes[skin_equipe]][1]],(rx(430),ry(5),ry(150),ry(150)),2)
+        fenetre.blit( font3.render(raretes[skins[skins_possedes[skin_equipe]][1]],20,cl_raretes[skins[skins_possedes[skin_equipe]][1]]) , [rx(650),ry(100)] )
         pygame.draw.rect(fenetre,(50,50,50),(rx(50),ry(180),rx(750),ry(450)),0)
         xx,yy=rx(50),ry(180)
         tcx,tcy=ry(150),ry(150)
