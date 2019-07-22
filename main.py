@@ -25,6 +25,7 @@ skin_equipe=int(f[0])
 for ff in f[1].split(cacc):
     try: skins_possedes.append( int(ff) )
     except: pass
+if skin_equipe>=len(skins_possedes): skin_equipe=0
 
 pygame.init()
 btex,btey=1280/1.5,1024/1.5
@@ -59,7 +60,6 @@ if nb_joysticks > 0:
 def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(50,200))
 
 tpage=int((rx(750)/ry(150))*3)
-print(tpage)
 
 dimg="images/"
 
@@ -74,7 +74,14 @@ sa8=["skin16-1.png","skin16-2.png","skin16-3.png","skin16-4.png","skin16-5.png"]
 sa9=["skin17-1.png","skin17-2.png","skin17-3.png","skin17-4.png","skin17-5.png"]
 skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
 [["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0],
-[sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0]
+[sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0],[["skin18.png"],1,False,0],[["skin19.png"],1,False,0],[["skin20.png"],1,False,0],[["skin21.png"],1,False,0]
+,[["skin22.png"],1,False,0],[["skin23.png"],1,False,0],[["skin24.png"],1,False,0],[["skin25.png"],1,False,0],[["skin26.png"],1,False,0],[["skin27.png"],1,False,0]
+,[["skin28.png"],1,False,0],[["skin29.png"],1,False,0],[["skin30.png"],1,False,0],[["skin31.png"],1,False,0],[["skin32.png"],1,False,0],[["skin33.png"],1,False,0]
+,[["skin34.png"],1,False,0],[["skin35.png"],1,False,0],[["skin36.png"],1,False,0],[["skin37.png"],1,False,0],[["skin38.png"],1,False,0],[["skin39.png"],1,False,0],[["skin40.png"],1,False,0]
+,[["skin41.png"],1,False,0],[["skin42.png"],1,False,0],[["skin43.png"],1,False,0],[["skin44.png"],1,False,0],[["skin45.png"],1,False,0],[["skin46.png"],1,False,0],[["skin47.png"],1,False,0]
+,[["skin48.png"],1,False,0],[["skin49.png"],1,False,0],[["skin50.png"],1,False,0],[["skin51.png"],1,False,0],[["skin52.png"],1,False,0],[["skin53.png"],1,False,0],[["skin54.png"],1,False,0]
+,[["skin55.png"],1,False,0],[["skin56.png"],1,False,0],[["skin57.png"],1,False,0],[["skin58.png"],1,False,0],[["skin59.png"],1,False,0],[["skin60.png"],1,False,0],[["skin61.png"],1,False,0]
+,[["skin62.png"],1,False,0],[["skin63.png"],1,False,0],[["skin64.png"],1,False,0],[["skin65.png"],1,False,0],[["skin67.png"],1,False,0],[["skin68.png"],1,False,0]
 ]
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
@@ -485,6 +492,9 @@ def main_jeu(skin_equipe,skins_possedes):
                 if event.key==K_ESCAPE:
                     encour_g=False
                     ecran_quit()
+                elif event.key==K_n:
+                    tpstot/=2
+                    ecran_dep_lvl(mape)
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if cube.cangrap and time.time()-cube.dgrap>=cube.tgrap:
@@ -496,12 +506,12 @@ def main_jeu(skin_equipe,skins_possedes):
         tt=t2-t1
         if tt!=0: fps=int(1./tt)
     sg,txt,cltxt=None,None,None
-    if niv < 15:    
+    if niv < 0:    
         if perdu:
             sg=random.choice(skins_com)
             txt="Vous avez gagné un skin commun !"
             cltxt=cl_raretes[0]
-    elif niv < 30:
+    elif niv < 15:
         sg=random.choice(skins_rar)
         txt="Vous avez gagné un skin rare !"
         cltxt=cl_raretes[1]
@@ -564,9 +574,13 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an):
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
         fenetre.blit( font3.render("skins possedes :",20,(250,250,250)) , [rx(20),ry(110)] )
         fenetre.blit( font3.render("skin équipé :",20,(250,250,250)) , [rx(200),ry(30)] )
-        fenetre.blit( pygame.transform.scale(   pygame.image.load(dimg+skins[skins_possedes[skin_equipe]][0][an]) , [ry(150),ry(150)]) , [rx(430),ry(5)])
-        pygame.draw.rect(fenetre,cl_raretes[skins[skins_possedes[skin_equipe]][1]],(rx(430),ry(5),ry(150),ry(150)),2)
-        fenetre.blit( font3.render(raretes[skins[skins_possedes[skin_equipe]][1]],20,cl_raretes[skins[skins_possedes[skin_equipe]][1]]) , [rx(650),ry(100)] )
+        if skin_equipe>=0 and skin_equipe<len(skins_possedes) and skins_possedes[skin_equipe]>=0 and skins_possedes[skin_equipe]<len(skins):
+            sk=skins_possedes[skin_equipe]
+            sk=skins[sk]
+            sk=sk[0][an]
+            fenetre.blit( pygame.transform.scale(   pygame.image.load(dimg+skins[skins_possedes[skin_equipe]][0][an]) , [ry(150),ry(150)]) , [rx(430),ry(5)])
+            pygame.draw.rect(fenetre,cl_raretes[skins[skins_possedes[skin_equipe]][1]],(rx(430),ry(5),ry(150),ry(150)),2)
+            fenetre.blit( font3.render(raretes[skins[skins_possedes[skin_equipe]][1]],20,cl_raretes[skins[skins_possedes[skin_equipe]][1]]) , [rx(280),ry(100)] )
         pygame.draw.rect(fenetre,(50,50,50),(rx(50),ry(180),rx(750),ry(450)),0)
         xx,yy=rx(50),ry(180)
         tcx,tcy=ry(150),ry(150)
@@ -583,6 +597,19 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an):
                     yy+=tcy
         btn4=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f1.png"),[rx(50),ry(100)]) , [tex-rx(50),ry(300)])
         btn5=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f2.png"),[rx(50),ry(100)]) , [0,ry(300)])
+        ms_com,ms_rar,ms_epi,ms_leg,ms_div=0,0,0,0,0
+        for s in skins_possedes:
+            if skins[s][1]==0: ms_com+=1
+            elif skins[s][1]==1: ms_rar+=1
+            elif skins[s][1]==2: ms_epi+=1
+            elif skins[s][1]==3: ms_leg+=1
+            else: ms_div+=1
+        fenetre.blit( font2.render("skins communs : "+str(ms_com)+" / "+str(len(skins_com)),20,cl_raretes[0]) , [rx(620),ry(30)] )
+        fenetre.blit( font2.render("skins rares : "+str(ms_rar)+" / "+str(len(skins_rar)),20,cl_raretes[1]) , [rx(620),ry(50)] )
+        fenetre.blit( font2.render("skins épiques : "+str(ms_epi)+" / "+str(len(skins_epi)),20,cl_raretes[2]) , [rx(620),ry(70)] )
+        fenetre.blit( font2.render("skins légendaires : "+str(ms_leg)+" / "+str(len(skins_leg)),20,cl_raretes[3]) , [rx(620),ry(90)] )
+        fenetre.blit( font2.render("skins divins : "+str(ms_div)+" / "+str(len(skins_div)),20,cl_raretes[4]) , [rx(620),ry(110)] )
+        fenetre.blit( font2.render("skins : "+str(len(skins_possedes))+" / "+str(len(skins)),20,(250,250,250)) , [rx(620),ry(130)] )
     pygame.display.update()
     return btn,btn2,btn3,btn4,btn5,bts
 
@@ -612,6 +639,7 @@ def menu(skin_equipe,skins_possedes):
                 if btn!=None and btn.collidepoint(pos):
                     save(skin_equipe,skins_possedes)
                     skin_equipe,skins_possedes=main_jeu(skin_equipe,skins_possedes)
+                    if skin_equipe>=len(skins_possedes): skin_equipe=0
                     save(skin_equipe,skins_possedes)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
@@ -627,5 +655,12 @@ def menu(skin_equipe,skins_possedes):
                         an=0
                 needtoaff=True
 
-menu(skin_equipe,skins_possedes)
+#try:
+if True:
+    menu(skin_equipe,skins_possedes)
+else:
+#except Exception as e:
+    pygame.quit()
+    print(e)
+    input("please send this at : nathpython@gmail.com")
 
