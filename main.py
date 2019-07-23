@@ -304,7 +304,7 @@ class Cube:
                 self.px-=self.vitx
                 self.py-=self.vity
             if cube2.pbg and self.rect.colliderect(cube2.rect):
-                self.vie-=1
+                self.vie-=2
             #physique
             if self.vitx>=self.decc: self.vitx-=self.decc
             if self.vitx>0 and self.vitx<self.decc: self.vitx=0
@@ -506,12 +506,12 @@ def main_jeu(skin_equipe,skins_possedes):
         tt=t2-t1
         if tt!=0: fps=int(1./tt)
     sg,txt,cltxt=None,None,None
-    if niv < 0:    
+    if niv < 15:    
         if perdu:
             sg=random.choice(skins_com)
             txt="Vous avez gagné un skin commun !"
             cltxt=cl_raretes[0]
-    elif niv < 15:
+    elif niv < 30:
         sg=random.choice(skins_rar)
         txt="Vous avez gagné un skin rare !"
         cltxt=cl_raretes[1]
@@ -639,16 +639,22 @@ def menu(skin_equipe,skins_possedes):
                 if btn!=None and btn.collidepoint(pos):
                     save(skin_equipe,skins_possedes)
                     skin_equipe,skins_possedes=main_jeu(skin_equipe,skins_possedes)
+                    an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
                     save(skin_equipe,skins_possedes)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
                     else: men=0
+                    an=0
                 elif btn4!=None and btn4.collidepoint(pos):
-                    if len(skins_possedes)>ps+tpage: ps+=tpage
+                    if len(skins_possedes)>ps+tpage:
+                        ps+=tpage
+                        an=0
                 elif btn5!=None and btn5.collidepoint(pos):
-                    if ps>=tpage: ps-=tpage
+                    if ps>=tpage:
+                        ps-=tpage
+                        an=0
                 for b in bts:
                     if b!=None and b.collidepoint(pos):
                         skin_equipe=skins_possedes.index(skins_possedes[bts.index(b)])
