@@ -273,10 +273,10 @@ class Cube:
                 if self.grapx<self.px-self.vitgrap: self.px-=self.vitgrap
                 elif self.grapx<self.px: self.px=self.grapx
                 
-                if self.grapy>self.py+self.vitgrap: self.py+=self.vitgrap
-                elif self.grapy>self.py: self.py=self.grapy
-                if self.grapy<self.py-self.vitgrap: self.py-=self.vitgrap
-                elif self.grapy<self.py: self.py=self.grapy
+                if self.grapy>self.py+self.ty/2+self.vitgrap: self.py+=self.vitgrap
+                elif self.grapy>self.py+self.ty/2: self.py=self.grapy
+                if self.grapy<self.py+self.ty/2-self.vitgrap: self.py-=self.vitgrap
+                elif self.grapy<self.py+self.ty/2: self.py=self.grapy
                 if self.px==self.grapx and self.py==self.grapy: self.isgrap=False
             cube2.keys.append([self.px,self.py])
             #collisions
@@ -410,7 +410,11 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot):
                 if mape.mape[x,y]==2: #piege clignotant
                     if mape.p1: cl=(255,0,0)
                     else: cl=(0,255,0)
-                pygame.draw.rect(fenetre,cl,(cam[0]+x*tc,cam[1]+y*tc,tc,tc),0)  
+                pygame.draw.rect(fenetre,cl,(cam[0]+x*tc,cam[1]+y*tc,tc,tc),0)
+                if x >= 1 and mape.mape[x-1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc-rx(2),cam[1]+y*tc,rx(2),tc),0)
+                if x <= mape.tx-1 and mape.mape[x+1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc+tc,cam[1]+y*tc,rx(2),tc),0)
+                if y >= 1 and mape.mape[x,y-1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc-ry(2),tc,ry(2)),0)
+                if y <= mape.ty-1 and mape.mape[x,y+1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc+tc,tc,ry(2)),0)
     #cube2
     if cube2.pbg: cl=(150,150,150)
     else: cl=(50,50,50)
@@ -661,11 +665,9 @@ def menu(skin_equipe,skins_possedes):
                         an=0
                 needtoaff=True
 
-#try:
-if True:
+try:
     menu(skin_equipe,skins_possedes)
-else:
-#except Exception as e:
+except Exception as e:
     pygame.quit()
     print(e)
     input("please send this at : nathpython@gmail.com")
