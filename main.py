@@ -3,6 +3,15 @@ import random,pygame,time,numpy,math,os
 from pygame.locals import *
 from os.path import expanduser
 
+pygame.init()
+btex,btey=1280/1.5,1024/1.5
+io = pygame.display.Info()
+mtex,mtey=io.current_w,io.current_h
+tex,tey=int(mtex/1.5),int(mtey/1.5)
+fullscreen=False
+acchardware=False
+doublebuf=False
+
 cac="|"
 cacc="#"
 
@@ -26,12 +35,13 @@ for ff in f[1].split(cacc):
     try: skins_possedes.append( int(ff) )
     except: pass
 if skin_equipe>=len(skins_possedes): skin_equipe=0
-
-pygame.init()
-btex,btey=1280/1.5,1024/1.5
-io = pygame.display.Info()
-mtex,mtey=io.current_w,io.current_h
-tex,tey=int(mtex/1.5),int(mtey/1.5)
+if len(f)>3:
+    tex=int(f[2])
+    tey=int(f[3])
+if len(f)>4:  fullscreen=bool(int(f[4]))
+if len(f)>5:  acchardware=bool(int(f[5]))
+if len(f)>6:  doublebuf=bool(int(f[6]))
+    
 
 def rx(x): return int(x/btex*tex)
 def ry(y): return int(y/btey*tey)
@@ -39,7 +49,12 @@ def ry(y): return int(y/btey*tey)
 def rxx(x): return float(float(x)/float(btex)*float(tex))
 def ryy(y): return float(float(y)/float(btey)*float(tey))
 
-fenetre=pygame.display.set_mode([tex,tey])
+options=0
+if fullscreen: options|=pygame.FULLSCREEN
+if acchardware: options|=pygame.HWSURFACE
+if doublebuf: options|=pygame.DOUBLEBUF
+
+fenetre=pygame.display.set_mode([tex,tey],options)
 pygame.display.set_caption("Cube2")
 font1=pygame.font.SysFont("Arial",ry(17))
 font2=pygame.font.SysFont("Arial",ry(20))
@@ -82,6 +97,7 @@ skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,
 ,[["skin48.png"],1,False,0],[["skin49.png"],1,False,0],[["skin50.png"],1,False,0],[["skin51.png"],1,False,0],[["skin52.png"],1,False,0],[["skin53.png"],1,False,0],[["skin54.png"],1,False,0]
 ,[["skin55.png"],1,False,0],[["skin56.png"],1,False,0],[["skin57.png"],1,False,0],[["skin58.png"],1,False,0],[["skin59.png"],1,False,0],[["skin60.png"],1,False,0],[["skin61.png"],1,False,0]
 ,[["skin62.png"],1,False,0],[["skin63.png"],1,False,0],[["skin64.png"],1,False,0],[["skin65.png"],1,False,0],[["skin67.png"],1,False,0],[["skin68.png"],1,False,0]
+,[["skin69.png"],0,False,0],[["skin70.png"],0,False,0],[["skin71.png"],0,False,0],[["skin72.png"],0,False,0],[["skin73.png"],0,False,0]
 ]
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
@@ -103,16 +119,24 @@ for x in range(len(skins)):
 raretes=["commun","rare","épique","légendaire","divin"]
 cl_raretes=[(38,110,224),(199,91,20),(202,14,227),(14,227,49),(255,255,0)]
 
-def save(skin_equipe,skins_possedes):
+def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
     txt=str(skin_equipe)+cac
     for s in skins_possedes:
         txt+=str(s)+cacc
     txt=txt[:-1]
+    txt+=cac+str(tex)+cac+str(tey)
+    fs="0"
+    if fullscreen: fs="1"
+    txt+=cac+fs
+    ah="0"
+    if acchardware: ah="1"
+    txt+=cac+ah
+    db="0"
+    if doublebuf: db="1"
+    txt+=cac+db
     f=open(dire+dfs,"w")
     f.write(txt)
     f.close()
-
-
 
 class Mape:
     def __init__(self,niv):
@@ -171,6 +195,7 @@ class Cube2:
         self.tx=cube.tx
         self.ty=cube.ty
         self.cl=(150,150,150)
+        self.img=pygame.transform.scale(pygame.image.load(dimg+"pics.png"),[self.tx,self.ty])
         self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
         self.dbg=time.time()
         self.tbg=0.01
@@ -234,6 +259,14 @@ class Cube:
         self.img=pygame.transform.rotate(self.imgs[self.an],self.agl)
         self.rot=skins[skins_possedes[skin_equipe]][2]
         self.ab=skins[skins_possedes[skin_equipe]][3]
+        self.fl1=pygame.transform.scale(pygame.image.load(dimg+"fl1.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl2=pygame.transform.scale(pygame.image.load(dimg+"fl2.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl3=pygame.transform.scale(pygame.image.load(dimg+"fl3.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl4=pygame.transform.scale(pygame.image.load(dimg+"fl4.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl5=pygame.transform.scale(pygame.image.load(dimg+"fl5.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl6=pygame.transform.scale(pygame.image.load(dimg+"fl6.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl7=pygame.transform.scale(pygame.image.load(dimg+"fl7.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.fl8=pygame.transform.scale(pygame.image.load(dimg+"fl8.png"),[int(self.tx*140/100),int(self.ty*140/100)])
     def bouger(self,aa,cube2):
         if time.time()-self.dk >= self.tk:
             self.dk=time.time()
@@ -411,18 +444,29 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot):
                     if mape.p1: cl=(255,0,0)
                     else: cl=(0,255,0)
                 pygame.draw.rect(fenetre,cl,(cam[0]+x*tc,cam[1]+y*tc,tc,tc),0)
-                if x >= 1 and mape.mape[x-1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc-rx(2),cam[1]+y*tc,rx(2),tc),0)
-                if x <= mape.tx-1 and mape.mape[x+1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc+tc,cam[1]+y*tc,rx(2),tc),0)
-                if y >= 1 and mape.mape[x,y-1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc-ry(2),tc,ry(2)),0)
-                if y <= mape.ty-1 and mape.mape[x,y+1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc+tc,tc,ry(2)),0)
+                if niv <= 10 and x >= 1 and mape.mape[x-1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc-rx(2),cam[1]+y*tc,rx(2),tc),0)
+                try:
+                    if niv <= 10 and x <= mape.tx-2 and mape.mape[x+1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc+tc,cam[1]+y*tc,rx(2),tc),0)
+                except: pass
+                if niv <= 10 and y >= 1 and mape.mape[x,y-1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc-ry(2),tc,ry(2)),0)
+                try:
+                    if niv <= 10 and y <= mape.ty-2 and mape.mape[x,y+1]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc,cam[1]+y*tc+tc,tc,ry(2)),0)
+                except: pass
     #cube2
-    if cube2.pbg: cl=(150,150,150)
-    else: cl=(50,50,50)
-    pygame.draw.rect(fenetre,cl,(cam[0]+cube2.px,cam[1]+cube2.py,cube2.tx,cube2.ty),0)
+    if cube2.pbg: fenetre.blit(cube2.img,[cam[0]+cube2.px,cam[1]+cube2.py])
+    else: pygame.draw.rect(fenetre,(50,50,50),(cam[0]+cube2.px,cam[1]+cube2.py,cube2.tx,cube2.ty),0)
     #cube
     if cube.isgrap: pygame.draw.line(fenetre,(79, 47, 19),(cam[0]+cube.px+cube.tx/2,cam[1]+cube.py+cube.ty/2),(cam[0]+cube.grapx,cam[1]+cube.grapy),rx(4))
     #pygame.draw.rect(fenetre,cube.cl,(cam[0]+cube.px,cam[1]+cube.py,cube.tx,cube.ty),0)
     fenetre.blit( cube.img , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)] )
+    if niv==1 and mape.fin[0]*tc > cube.px and abs(mape.fin[1]*tc-cube.py)<tc: fenetre.blit( cube.fl1 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[0]*tc < cube.px and abs(mape.fin[1]*tc-cube.py)<tc: fenetre.blit( cube.fl2 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[1]*tc > cube.py and abs(mape.fin[0]*tc-cube.px)<tc: fenetre.blit( cube.fl3 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[1]*tc < cube.py and abs(mape.fin[0]*tc-cube.px)<tc: fenetre.blit( cube.fl4 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[0]*tc > cube.px and mape.fin[1]*tc > cube.py: fenetre.blit( cube.fl5 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[0]*tc > cube.px and mape.fin[1]*tc < cube.py: fenetre.blit( cube.fl6 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[0]*tc < cube.px and mape.fin[1]*tc > cube.py: fenetre.blit( cube.fl7 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    elif niv==1 and mape.fin[0]*tc < cube.px and mape.fin[1]*tc < cube.py: fenetre.blit( cube.fl8 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
     #ui
     pygame.draw.rect(fenetre,(255-int((tpstot-(time.time()-tps1))/tpstot*255),int((tpstot-(time.time()-tps1))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps1))/tpstot*tex),ry(10)),0)
     pygame.draw.rect(fenetre,(250,0,0),(rx(100),ry(15),int(cube.vie/cube.vie_tot*rx(200)),ry(15)),0)
@@ -549,10 +593,12 @@ def main_jeu(skin_equipe,skins_possedes):
                     encour=False
     return skin_equipe,skins_possedes
     
-def aff_menu(men,skin_equipe,skins_possedes,ps,an):
-    btn,btn2,btn3,btn4,btn5=None,None,None,None,None
+def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf):
+    btn,btn2,btn3,btn4,btn5,btn6=None,None,None,None,None,None
     bts=[]
-    for x in range(50): bts.append( None )
+    for x in range(3*(tpage+1)): bts.append( None )
+    bst=[]
+    for x in range(10): bst.append( None )
     fenetre.fill((0,0,0))
     if men==0:
         fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
@@ -573,6 +619,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an):
         fenetre.blit( font4.render("quitter",20,(255,255,255)) , [rx(350),ry(620)] )
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(500),rx(100),ry(50)),0)
         fenetre.blit( font3.render("skins",20,(25,25,25)) , [rx(60),ry(510)] )
+        btn6=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(565),rx(200),ry(50)),0)
+        fenetre.blit( font3.render("parametres",20,(25,25,25)) , [rx(60),ry(575)] )
     elif men==1:
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
@@ -614,10 +662,33 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an):
         fenetre.blit( font2.render("skins légendaires : "+str(ms_leg)+" / "+str(len(skins_leg)),20,cl_raretes[3]) , [rx(620),ry(90)] )
         fenetre.blit( font2.render("skins divins : "+str(ms_div)+" / "+str(len(skins_div)),20,cl_raretes[4]) , [rx(620),ry(110)] )
         fenetre.blit( font2.render("skins : "+str(len(skins_possedes))+" / "+str(len(skins)),20,(250,250,250)) , [rx(620),ry(130)] )
+    elif men==2:
+        btn6=pygame.draw.rect(fenetre,(200,200,200),(rx(15),ry(15),rx(100),ry(50)),0)
+        fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(25),ry(25)] )
+        cl=(150,0,0)
+        if fullscreen: cl=(0,150,0)
+        bst[0]=pygame.draw.rect( fenetre, cl , (rx(50),ry(250),rx(50),rx(50)) , 0)
+        fenetre.blit( font3.render("fullscreen",True,(255,255,255)), [rx(120),ry(260)])
+        cl=(150,0,0)
+        if acchardware: cl=(0,150,0)
+        bst[1]=pygame.draw.rect( fenetre, cl , (rx(50),ry(330),rx(50),rx(50)) , 0)
+        fenetre.blit( font3.render("accelerated hardware",True,(255,255,255)), [rx(120),ry(340)]) 
+        cl=(150,0,0)
+        if doublebuf: cl=(0,150,0)
+        bst[2]=pygame.draw.rect( fenetre, cl , (rx(50),ry(410),rx(50),rx(50)) , 0)
+        fenetre.blit( font3.render("double buff",True,(255,255,255)), [rx(120),ry(420)])
+        fenetre.blit( font3.render("résolution de la fenetre :",True,(255,255,255)), [rx(170),ry(40)])
+        bst[3]=pygame.draw.rect( fenetre, (50,50,50), (rx(100),ry(100),rx(50),ry(50)) , 0)
+        fenetre.blit( font3.render("<",True,(255,255,255)), [rx(110),ry(110)])
+        pygame.draw.rect(fenetre,(210,210,210),(rx(180),ry(100),rx(300),ry(50)),0)
+        fenetre.blit( font3.render(str(tex)+" x "+str(tey),True,(25,25,25)), [rx(190),ry(110)])
+        bst[4]=pygame.draw.rect( fenetre, (50,50,50), (rx(510),ry(100),rx(50),ry(50)) , 0)
+        fenetre.blit( font3.render(">",True,(255,255,255)), [rx(520),ry(110)])
+        fenetre.blit( font2.render("Pour que les parametres s'appliquent, veuillez relancer le jeu",True,(150,0,0)), [rx(10),ry(500)])
     pygame.display.update()
-    return btn,btn2,btn3,btn4,btn5,bts
+    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst
 
-def menu(skin_equipe,skins_possedes):
+def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
     men=0
     needtoaff=True
     ps=0
@@ -632,7 +703,7 @@ def menu(skin_equipe,skins_possedes):
             if an >= len(skins[skins_possedes[skin_equipe]][0]): an=0
             needtoaff=True
         if needtoaff:
-            btn,btn2,btn3,btn4,btn5,bts=aff_menu(men,skin_equipe,skins_possedes,ps,an)
+            btn,btn2,btn3,btn4,btn5,btn6,bts,bst=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf)
             needtoaff=False
         for event in pygame.event.get():
             if event.type==QUIT: exit()
@@ -641,11 +712,11 @@ def menu(skin_equipe,skins_possedes):
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
-                    save(skin_equipe,skins_possedes)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
                     skin_equipe,skins_possedes=main_jeu(skin_equipe,skins_possedes)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
-                    save(skin_equipe,skins_possedes)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
@@ -659,16 +730,41 @@ def menu(skin_equipe,skins_possedes):
                     if ps>=tpage:
                         ps-=tpage
                         an=0
+                elif btn6!=None and btn6.collidepoint(pos):
+                    if men==0: men=2
+                    else: men=0
+                    an=0
                 for b in bts:
                     if b!=None and b.collidepoint(pos):
                         skin_equipe=skins_possedes.index(skins_possedes[bts.index(b)])
                         an=0
+                for b in bst:
+                    if b!=None and b.collidepoint(pos):
+                        di=bst.index(b)
+                        if di==0:
+                            fullscreen=not fullscreen
+                            if not fullscreen: tex,tey=int(mtex/1.5),int(mtey/1.5)
+                            else: tex,tey=mtex,mtey
+                        elif di==1: acchardware=not acchardware
+                        elif di==2: doublebuf=not doublebuf
+                        elif di==3:
+                            d=float(mtex/tex)+0.5
+                            if d > 3: d=3
+                            tex,tey=int(mtex/d),int(mtey/d)
+                        elif di==4:
+                            d=float(mtex/tex)-0.5
+                            if d < 1: d=1
+                            tex,tey=int(mtex/d),int(mtey/d)
+                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
                 needtoaff=True
 
-try:
-    menu(skin_equipe,skins_possedes)
-except Exception as e:
+#ry:
+if True:
+    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
+#except Exception as e:
+else:
     pygame.quit()
-    print(e)
-    input("please send this at : nathpython@gmail.com")
+    if e!="name 'exit' is not defined":
+        print(e)
+        input("please send this at : nathpython@gmail.com")
 
