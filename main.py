@@ -12,8 +12,49 @@ fullscreen=False
 acchardware=False
 doublebuf=False
 
+def new_succes(s):
+    print("Nouveau Succès Débloqué : "+str(s[0]))
+    print("   -"+str(s[1]))
+    
+
+class Succes:
+    def __init__(self):
+        self.s1=["Première Partie","A joué 1 partie",False]
+        self.s2=["Le début d'une grande aventure","A joué 10 parties",False]
+        self.s3=["Vétérand","A joué 100 parties",False]
+        self.s4=["Courageux","A joué 1000 parties",False]
+        self.s5=["Suicidaire","A joué 10000 parties",False]
+        self.s6=["Niveau bronze","Est déja arrivé au niveau 10",False]
+        self.s7=["Niveau argent","Est déjà arrivé au niveau 20",False]
+        self.s8=["Niveau or","Est déjà arrivé au niveau 40",False]
+        self.s9=["Niveau diamant","Est déjà arrivé au niveau 70",False]
+        self.s10=["Niveau platinium","Est déjà arrivé au niveau 95",False]
+        self.s11=["Vous êtes divins !","A déjà réussit à gagner une partie (niv 100)",False]
+        self.s12=["Première mort","Est déjà mort 1 fois (mais avec un minimum de déplacement)",False]
+        self.s13=["Habitué à mourir","Est déjà mort 100 fois (mais avec un minimum de déplacement)",False]
+        self.s14=["Pluie de morts","Est déjà mort 1000 fois (mais avec un minimum de déplacement)",False]
+        self.s15=["Cimetière","Est déjà mort 10000 fois (mais avec un minimum de déplacement)",False]
+        self.s16=["Hécatombe","Est déjà mort 100000 fois (mais avec un minimum de déplacement)",False]
+        self.s17=["Petit collectionneur","Possède 10 skins",False]
+        self.s18=["Collectionneur affirmé","Possède 40 skins",False]
+        self.s19=["Collectionneur complet","Possède tous les skins",False]
+        self.s20=["Premiers pas","A parcouru une distance de 10.000 pixels",False]
+        self.s21=["Voyageur","A parcouru une distance de 100.000 pixels",False]
+        self.s22=["Grand Voyageur","A parcouru une distance de 1.000.000 pixels",False]
+        self.s23=["GlobeTrotter","A parcouru une distance de 10.000.000 pixels",False]
+        self.nbparties=0
+        self.niveau_max=0
+        self.distance_parcourue=0
+        self.mort_avec_dist_min=0
+        self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10]
+    def test_succes(self,cube):
+        if nbparties>=1 and not self.s1[2]:
+            s1[2]=True
+            new_succes()
+
 cac="|"
 cacc="#"
+ccac="@"
 
 home = expanduser("~")
 dre="Cube2/"
@@ -41,7 +82,7 @@ if len(f)>3:
 if len(f)>4:  fullscreen=bool(int(f[4]))
 if len(f)>5:  acchardware=bool(int(f[5]))
 if len(f)>6:  doublebuf=bool(int(f[6]))
-    
+if len(f)>7:  successes=f[7].split(cacc)
 
 def rx(x): return int(x/btex*tex)
 def ry(y): return int(y/btey*tey)
