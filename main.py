@@ -76,7 +76,7 @@ class Succes:
         self.mort_avec_dist_min=0
         self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10]
     def test_succes(self,cube,niv,skpos,liste_succes):
-        for s in self succes:
+        for s in self.succes:
             if not s[2]:
                 v=0
                 cond=False
@@ -107,7 +107,7 @@ class Succes:
                 if cond:
                     s[2]=True
                     liste_succes=new_succes(s,liste_succes)
-    return liste_succes
+        return liste_succes
 
 cac="|"
 cacc="#"
@@ -561,7 +561,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
 def main_jeu(skin_equipe,skins_possedes):
-	liste_succes=[]
+    liste_succes=[]
     tcb=rx(100)
     niv=1
     ecran_chargement()
