@@ -93,15 +93,15 @@ class Succes:
                 elif s[3]=="distt":
                     v=cube.dist_parc+self.distance_parcourue
                 if s[4]==">=":
-                    cond=s[5]>=v
+                    cond=v>=s[5]
                 elif s[4]==">":
-                    cond=s[5]>=v
+                    cond=v>s[5]
                 elif s[4]=="==":
-                    cond=s[5]>=v
+                    cond=v==s[5]
                 elif s[4]=="<=":
-                    cond=s[5]>=v
+                    cond=v<=s[5]
                 elif s[4]=="<":
-                    cond=s[5]>=v
+                    cond=v<s[5]
                 elif s[4]=="!=":
                     cond=s[5]!=v
                 if cond:
@@ -126,6 +126,8 @@ if not dfs in os.listdir(dire):
 
 skins_possedes=[]
 skin_equipe=0
+
+nbspp=6
 
 f=open(dire+dfs,"r").read().split(cac)
 skin_equipe=int(f[0])
@@ -547,6 +549,12 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes):
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
     fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(25)] )
     fenetre.blit( font1.render("vous êtes mort : "+str(morts)+" fois",20,(255,255,255)), [tex-rx(200),ry(10)] )
+    n=1
+    for s in liste_succes:
+        pygame.draw.rect( fenetre , (70,70,70) , ( tex-rxx(200) , tey-ryy(80) , rxx(200) , ryy(80) ) , 0)
+        fenetre.blit( font2.render("Nouveau succès débloqué : "+s[0],True,(255,255,255)) , (tex-rxx(190),tey-ryy(50)*n) )
+        fenetre.blit( font1.render(s[1],True,(225,225,225)) , (tex-rxx(180),tey-ryy(30)*n) )
+        n+=1
     pygame.display.update()
 
 def cniv(tcb,niv,skin_equipe,skins_possedes):
@@ -560,8 +568,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     tpstot=60+40*mape.dif
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
-def main_jeu(skin_equipe,skins_possedes):
-    liste_succes=[]
+def main_jeu(skin_equipe,skins_possedes,liste_succes):
     tcb=rx(100)
     niv=1
     ecran_chargement()
@@ -571,6 +578,7 @@ def main_jeu(skin_equipe,skins_possedes):
     encour_g=True
     morts=0
     fps=0
+    succes.test_succes(cube,niv,skpos,liste_succes)
     perdu=False
     while encour_g:
         t1=time.time()
@@ -587,6 +595,7 @@ def main_jeu(skin_equipe,skins_possedes):
             cube.isgrap=False
             time.sleep(0.1)
             cube2.reload(cube)
+            succes.test_succes(cube,niv,skpos,liste_succes)
         elif etat==True:
             if niv<100:
                 niv+=1
@@ -594,14 +603,21 @@ def main_jeu(skin_equipe,skins_possedes):
                 mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
                 ecran_dep_lvl(mape)
                 cube2.reload(cube)
+                succes.test_succes(cube,niv,skpos,liste_succes)
             else:
                 encour_g=False
+                succes.test_succes(cube,niv,skpos,liste_succes)
                 ecran_fin()
         if time.time()-tps1>=tpstot:
             encour=False
             perdu=True
+            succes.test_succes(cube,niv,skpos,liste_succes)
             ecran_mort()
             break
+        #gestion succes aff
+        for s in liste_succes:
+            if time.time()-s[3]>=s[2]:
+                del(liste_succes[liste_succes.index(s)])
         cam=[-cube.px+tex/2,-cube.py+tey/2]
         #mape
         mape.update()
@@ -665,10 +681,11 @@ def main_jeu(skin_equipe,skins_possedes):
                     if event.key==K_SPACE: encour=False
                 elif event.type==MOUSEBUTTONUP:
                     encour=False
-    return skin_equipe,skins_possedes
+    succes.test_succes(cube,niv,skpos,liste_succes)
+    return skin_equipe,skins_possedes,liste_succes
     
-def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf):
-    btn,btn2,btn3,btn4,btn5,btn6=None,None,None,None,None,None
+def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
+    btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7=None,None,None,None,None,None,None,None,None
     bts=[]
     for x in range(3*(tpage+1)): bts.append( None )
     bst=[]
@@ -695,6 +712,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("skins",20,(25,25,25)) , [rx(60),ry(510)] )
         btn6=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(565),rx(200),ry(50)),0)
         fenetre.blit( font3.render("parametres",20,(25,25,25)) , [rx(60),ry(575)] )
+        btn7=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(435),rx(200),ry(50)),0)
+        fenetre.blit( font3.render("Succes",20,(25,25,25)) , [rx(60),ry(445)] )
     elif men==1:
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
@@ -759,17 +778,68 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bst[4]=pygame.draw.rect( fenetre, (50,50,50), (rx(510),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render(">",True,(255,255,255)), [rx(520),ry(110)])
         fenetre.blit( font2.render("Pour que les parametres s'appliquent, veuillez relancer le jeu",True,(150,0,0)), [rx(10),ry(500)])
+    elif men==3:
+        btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
+        fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
+        n=0
+        x=0   
+        for s in succes.succes:
+            n+=1
+            if n>=pscs and n<=pscs+nbspp-1:
+                pygame.draw.rect(fenetre,(200,200,200),(rx(100),ry(100)+x*ry(80),rx(650),ry(70)),0)
+                fenetre.blit( font2.render("Succes N°"+str(n)+" : "+s[0],True,(0,0,0)) , (rx(120),ry(120)+x*ry(80)) )
+                fenetre.blit( font1.render(s[1],True,(20,20,20)) , (rx(130),ry(140)+x*ry(80)) )
+                if s[2]:
+                    fenetre.blit( font1.render("Fait.",True,(0,255,0)) , (rx(600),ry(110)+x*ry(80)) )
+                else:
+                    v=0
+                    if s[3]=="nbp":     v=succes.nbparties
+                    elif s[3]=="nbpb":  v=succes.nbpartiesbons
+                    elif s[3]=="cniv":  v=succes.niveau_max
+                    elif s[3]=="bmor":  v=succes.mort_avec_dist_min
+                    elif s[3]=="nbsk":  v=len(skins_possedes)
+                    elif s[3]=="distt": v=succes.distance_parcourue
+                    if s[4]==">=":
+                        pc=((v/s[5]))
+                        if pc>1: pc=1
+                        cl=(int(255-pc*255),int(pc*255),0)
+                        fenetre.blit( font1.render("Non Accomplit",True,cl) , (rx(600),ry(110)+x*ry(80)) )
+                        pygame.draw.rect( fenetre , cl , (rx(600),ry(130)+x*ry(80),int(pc*rx(100)),ry(10) ) , 0 )
+                        pygame.draw.rect( fenetre , (0,0,0) , (rx(600),ry(130)+x*ry(80),rx(100),ry(10) ) , rx(2) )
+                x+=1
+        ln=len(succes.succes)
+        tty=ry(500)
+        a=int(ln/nbspp*tty)
+        pygame.draw.rect( fenetre , (150,150,150) , (tex-rx(50),ry(100),rx(30),tty) , 0 )
+        pygame.draw.rect( fenetre , (50,50,50) , (tex-rx(50),ry(100)+int(ry(400)*len(succes.succes)/nbspp),rx(30),int(ry(400)*nbspp/n)) , 0 )
+        bts1=pygame.draw.rect( fenetre , (250,250,250) , (tex-rx(50),ry(10),rx(30),ry(30)) , 0)
+        pygame.draw.rect( fenetre , (0,0,0) , (tex-rx(50),ry(10),rx(30),ry(30)) , rx(2))
+        fenetre.blit( font2.render("^",True,(20,20,20)) , (tex-rx(45),ry(20)) )
+        bts2=pygame.draw.rect( fenetre , (250,250,250) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , 0)
+        pygame.draw.rect( fenetre , (0,0,0) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , rx(2))
+        fenetre.blit( font1.render("v",True,(20,20,20)) , (tex-rx(45),tey-ry(40)) )
+    n=1
+    for s in liste_succes:
+        pygame.draw.rect( fenetre , (70,70,70) , ( tex-rxx(200) , tey-ryy(80) , rxx(200) , ryy(80) ) , 0)
+        fenetre.blit( font2.render("Nouveau succès débloqué : "+s[0],True,(255,255,255)) , (tex-rxx(190),tey-ryy(50)*n) )
+        fenetre.blit( font1.render(s[1],True,(225,225,225)) , (tex-rxx(180),tey-ryy(30)*n) )
+        n+=1
     pygame.display.update()
-    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst
+    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7
 
 def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
-    men=0
-    needtoaff=True
+    cube=None
+    niv=0
+    pscs=1
     ps=0
     an=0
+    men=0
     tan=0.1
-    dan=time.time()
     encour=True
+    needtoaff=True
+    dan=time.time()
+    succes=Succes()
+    liste_succes=[]
     while encour:
         if time.time()-dan>=tan and len(skins[skins_possedes[skin_equipe]][0])>1:
             dan=time.time()
@@ -777,17 +847,25 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
             if an >= len(skins[skins_possedes[skin_equipe]][0]): an=0
             needtoaff=True
         if needtoaff:
-            btn,btn2,btn3,btn4,btn5,btn6,bts,bst=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf)
+            succes.test_succes(cube,niv,skins_possedes,liste_succes)
+            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs)
             needtoaff=False
+        for s in liste_succes:
+            if time.time()-s[3]>=s[2]:
+                del(liste_succes[liste_succes.index(s)])
         for event in pygame.event.get():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE: encour=False
+                elif event.key==K_UP and men==3:
+                    if pscs>1: pscs-=1
+                elif event.key==K_DOWN and men==3:
+                    if pscs<len(succes.succes)-1: pscs+=1
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
-                    skin_equipe,skins_possedes=main_jeu(skin_equipe,skins_possedes)
+                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
@@ -806,6 +884,18 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
                         an=0
                 elif btn6!=None and btn6.collidepoint(pos):
                     if men==0: men=2
+                    else: men=0
+                    an=0
+                elif bts1!=None and bts1.collidepoint(pos):
+                    pscs-=nbspp
+                    if pscs<1: pscs=1
+                    an=0
+                elif bts2!=None and bts2.collidepoint(pos):
+                    pscs+=nbspp
+                    if pscs>len(succes.succes): pscs=len(succes.succes)
+                    an=0
+                elif btn7!=None and btn7.collidepoint(pos):
+                    if men==0: men=3
                     else: men=0
                     an=0
                 for b in bts:
