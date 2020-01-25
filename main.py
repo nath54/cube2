@@ -75,7 +75,7 @@ class Succes:
         self.distance_parcourue=0
         self.mort_avec_dist_min=0
         self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10]
-    def test_succes(self,cube,niv,skpos,liste_succes):
+    def test_succes(self,cube,niv,skins_possedes,liste_succes):
         for s in self.succes:
             if not s[2]:
                 v=0
@@ -89,7 +89,7 @@ class Succes:
                 elif s[3]=="bmor":
                     v=self.mort_avec_dist_min
                 elif s[3]=="nbsk":
-                    v=len(skpos)
+                    v=len(skins_possedes)
                 elif s[3]=="distt":
                     v=cube.dist_parc+self.distance_parcourue
                 if s[4]==">=":
@@ -568,7 +568,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     tpstot=60+40*mape.dif
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
-def main_jeu(skin_equipe,skins_possedes,liste_succes):
+def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
     tcb=rx(100)
     niv=1
     ecran_chargement()
@@ -578,7 +578,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes):
     encour_g=True
     morts=0
     fps=0
-    succes.test_succes(cube,niv,skpos,liste_succes)
+    succes.test_succes(cube,niv,skins_possedes,liste_succes)
     perdu=False
     while encour_g:
         t1=time.time()
@@ -595,7 +595,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes):
             cube.isgrap=False
             time.sleep(0.1)
             cube2.reload(cube)
-            succes.test_succes(cube,niv,skpos,liste_succes)
+            succes.test_succes(cube,niv,skins_possedes,liste_succes)
         elif etat==True:
             if niv<100:
                 niv+=1
@@ -603,15 +603,15 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes):
                 mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
                 ecran_dep_lvl(mape)
                 cube2.reload(cube)
-                succes.test_succes(cube,niv,skpos,liste_succes)
+                succes.test_succes(cube,niv,skins_possedes,liste_succes)
             else:
                 encour_g=False
-                succes.test_succes(cube,niv,skpos,liste_succes)
+                succes.test_succes(cube,niv,skins_possedes,liste_succes)
                 ecran_fin()
         if time.time()-tps1>=tpstot:
             encour=False
             perdu=True
-            succes.test_succes(cube,niv,skpos,liste_succes)
+            succes.test_succes(cube,niv,skins_possedes,liste_succes)
             ecran_mort()
             break
         #gestion succes aff
@@ -681,7 +681,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes):
                     if event.key==K_SPACE: encour=False
                 elif event.type==MOUSEBUTTONUP:
                     encour=False
-    succes.test_succes(cube,niv,skpos,liste_succes)
+    succes.test_succes(cube,niv,skins_possedes,liste_succes)
     return skin_equipe,skins_possedes,liste_succes
     
 def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
@@ -865,7 +865,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
-                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes)
+                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
