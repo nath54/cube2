@@ -12,45 +12,102 @@ fullscreen=False
 acchardware=False
 doublebuf=False
 
-def new_succes(s):
+def new_succes(s,liste_succes):
     print("Nouveau Succès Débloqué : "+str(s[0]))
     print("   -"+str(s[1]))
+    liste_succes.append( [s[0],s[1],3,time.time()] )
+    return liste_succes
     
+dimg="images/"
+
+sa1=["skin4-1.png","skin4-2.png","skin4-3.png","skin4-4.png","skin4-5.png","skin4-6.png","skin4-7.png","skin4-8.png","skin4-9.png","skin4-10.png","skin4-11.png","skin4-12.png","skin4-13.png","skin4-12.png","skin4-11.png","skin4-10.png","skin4-9.png","skin4-8.png","skin4-7.png","skin4-6.png","skin4-5.png","skin4-4.png","skin4-3.png","skin4-2.png","skin4-1.png"]
+sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-5.png","skin6-6.png","skin6-7.png","skin6-8.png","skin6-9.png","skin6-10.png","skin6-11.png","skin6-12.png","skin6-13.png","skin6-14.png","skin6-15.png","skin6-16.png","skin6-17.png","skin6-18.png","skin6-19.png","skin6-20.png"]
+sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
+sa4=["skin11-1.png","skin11-2.png","skin11-3.png","skin11-4.png","skin11-5.png","skin11-6.png","skin11-5.png","skin11-4.png","skin11-3.png","skin11-2.png"]
+sa5=["skin13-1.png","skin13-2.png","skin13-3.png","skin13-4.png","skin13-5.png"]
+sa6=["skin14-1.png","skin14-2.png","skin14-3.png","skin14-4.png","skin14-5.png","skin14-6.png","skin14-7.png","skin14-8.png","skin14-9.png"]
+sa7=["skin15-1.png","skin15-2.png","skin15-3.png","skin15-4.png","skin15-5.png","skin15-6.png","skin15-7.png","skin15-8.png","skin15-9.png","skin15-10.png","skin15-11.png","skin15-12.png","skin15-13.png"]
+sa8=["skin16-1.png","skin16-2.png","skin16-3.png","skin16-4.png","skin16-5.png"]
+sa9=["skin17-1.png","skin17-2.png","skin17-3.png","skin17-4.png","skin17-5.png"]
+skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
+[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0],
+[sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0],[["skin18.png"],1,False,0],[["skin19.png"],1,False,0],[["skin20.png"],1,False,0],[["skin21.png"],1,False,0]
+,[["skin22.png"],1,False,0],[["skin23.png"],1,False,0],[["skin24.png"],1,False,0],[["skin25.png"],1,False,0],[["skin26.png"],1,False,0],[["skin27.png"],1,False,0]
+,[["skin28.png"],1,False,0],[["skin29.png"],1,False,0],[["skin30.png"],1,False,0],[["skin31.png"],1,False,0],[["skin32.png"],1,False,0],[["skin33.png"],1,False,0]
+,[["skin34.png"],1,False,0],[["skin35.png"],1,False,0],[["skin36.png"],1,False,0],[["skin37.png"],1,False,0],[["skin38.png"],1,False,0],[["skin39.png"],1,False,0],[["skin40.png"],1,False,0]
+,[["skin41.png"],1,False,0],[["skin42.png"],1,False,0],[["skin43.png"],1,False,0],[["skin44.png"],1,False,0],[["skin45.png"],1,False,0],[["skin46.png"],1,False,0],[["skin47.png"],1,False,0]
+,[["skin48.png"],1,False,0],[["skin49.png"],1,False,0],[["skin50.png"],1,False,0],[["skin51.png"],1,False,0],[["skin52.png"],1,False,0],[["skin53.png"],1,False,0],[["skin54.png"],1,False,0]
+,[["skin55.png"],1,False,0],[["skin56.png"],1,False,0],[["skin57.png"],1,False,0],[["skin58.png"],1,False,0],[["skin59.png"],1,False,0],[["skin60.png"],1,False,0],[["skin61.png"],1,False,0]
+,[["skin62.png"],1,False,0],[["skin63.png"],1,False,0],[["skin64.png"],1,False,0],[["skin65.png"],1,False,0],[["skin67.png"],1,False,0],[["skin68.png"],1,False,0]
+,[["skin69.png"],0,False,0],[["skin70.png"],0,False,0],[["skin71.png"],0,False,0],[["skin72.png"],0,False,0],[["skin73.png"],0,False,0]
+]
+#0=imgs 1 = rarete 2=rotate 3=agl base
+#raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
 
 class Succes:
     def __init__(self):
-        self.s1=["Première Partie","A joué 1 partie",False]
-        self.s2=["Le début d'une grande aventure","A joué 10 parties",False]
-        self.s3=["Vétérand","A joué 100 parties",False]
-        self.s4=["Courageux","A joué 1000 parties",False]
-        self.s5=["Suicidaire","A joué 10000 parties",False]
-        self.s6=["Niveau bronze","Est déja arrivé au niveau 10",False]
-        self.s7=["Niveau argent","Est déjà arrivé au niveau 20",False]
-        self.s8=["Niveau or","Est déjà arrivé au niveau 40",False]
-        self.s9=["Niveau diamant","Est déjà arrivé au niveau 70",False]
-        self.s10=["Niveau platinium","Est déjà arrivé au niveau 95",False]
-        self.s11=["Vous êtes divins !","A déjà réussit à gagner une partie (niv 100)",False]
-        self.s12=["Première mort","Est déjà mort 1 fois (mais avec un minimum de déplacement)",False]
-        self.s13=["Habitué à mourir","Est déjà mort 100 fois (mais avec un minimum de déplacement)",False]
-        self.s14=["Pluie de morts","Est déjà mort 1000 fois (mais avec un minimum de déplacement)",False]
-        self.s15=["Cimetière","Est déjà mort 10000 fois (mais avec un minimum de déplacement)",False]
-        self.s16=["Hécatombe","Est déjà mort 100000 fois (mais avec un minimum de déplacement)",False]
-        self.s17=["Petit collectionneur","Possède 10 skins",False]
-        self.s18=["Collectionneur affirmé","Possède 40 skins",False]
-        self.s19=["Collectionneur complet","Possède tous les skins",False]
-        self.s20=["Premiers pas","A parcouru une distance de 10.000 pixels",False]
-        self.s21=["Voyageur","A parcouru une distance de 100.000 pixels",False]
-        self.s22=["Grand Voyageur","A parcouru une distance de 1.000.000 pixels",False]
-        self.s23=["GlobeTrotter","A parcouru une distance de 10.000.000 pixels",False]
+        self.s1=["Première Partie"                     ,"A joué 1 partie"                                                  ,False,"nbp"   ,">=" ,1          ]
+        self.s2=["Le début d'une grande aventure"      ,"A joué 10 parties"                                                ,False,"nbpb"  ,">=" ,10         ]
+        self.s3=["Vétérand"                            ,"A joué 100 parties"                                               ,False,"nbpb"  ,">=" ,100        ]
+        self.s4=["Courageux"                           ,"A joué 1000 parties"                                              ,False,"nbpb"  ,">=" ,1000       ]
+        self.s5=["Suicidaire"                          ,"A joué 10000 parties"                                             ,False,"nbpb"  ,">=" ,10000      ]
+        self.s6=["Niveau bronze"                       ,"Est déja arrivé au niveau 10"                                     ,False,"cniv"  ,">=" ,10         ]
+        self.s7=["Niveau argent"                       ,"Est déjà arrivé au niveau 20"                                     ,False,"cniv"  ,">=" ,20         ]
+        self.s8=["Niveau or"                           ,"Est déjà arrivé au niveau 40"                                     ,False,"cniv"  ,">=" ,40         ]
+        self.s9=["Niveau diamant"                      ,"Est déjà arrivé au niveau 70"                                     ,False,"cniv"  ,">=" ,70         ]
+        self.s10=["Niveau platinium"                   ,"Est déjà arrivé au niveau 95"                                     ,False,"cniv"  ,">=" ,95         ]
+        self.s11=["Vous êtes divins !"                 ,"A déjà réussit à gagner une partie (niv 100)"                     ,False,"cniv"  ,">=" ,100        ]
+        self.s12=["Première mort"                      ,"Est déjà mort 1 fois (mais avec un minimum de déplacement)"       ,False,"bmor"  ,">=" ,1          ]
+        self.s13=["Habitué à mourir"                   ,"Est déjà mort 100 fois (mais avec un minimum de déplacement)"     ,False,"bmor"  ,">=" ,100        ]
+        self.s14=["Pluie de morts"                     ,"Est déjà mort 1000 fois (mais avec un minimum de déplacement)"    ,False,"bmor"  ,">=" ,1000       ]
+        self.s15=["Cimetière"                          ,"Est déjà mort 10000 fois (mais avec un minimum de déplacement)"   ,False,"bmor"  ,">=" ,10000      ]
+        self.s16=["Hécatombe"                          ,"Est déjà mort 100000 fois (mais avec un minimum de déplacement)"  ,False,"bmor"  ,">=" ,100000     ]
+        self.s17=["Petit collectionneur"               ,"Possède 10 skins"                                                 ,False,"nbsk"  ,">=" ,10         ]
+        self.s18=["Collectionneur affirmé"             ,"Possède 40 skins"                                                 ,False,"nbsk"  ,">=" ,40         ]
+        self.s19=["Collectionneur complet"             ,"Possède tous les skins"                                           ,False,"nbsk"  ,"==" ,len(skins) ]
+        self.s20=["Premiers pas"                       ,"A parcouru une distance de 10.000 pixels"                         ,False,"distt" ,">=" ,10000      ]
+        self.s21=["Voyageur"                           ,"A parcouru une distance de 100.000 pixels"                        ,False,"distt" ,">=" ,100000     ]
+        self.s22=["Grand Voyageur"                     ,"A parcouru une distance de 1.000.000 pixels"                      ,False,"distt" ,">=" ,1000000    ]
+        self.s23=["GlobeTrotter"                       ,"A parcouru une distance de 10.000.000 pixels"                     ,False,"distt" ,">=" ,10000000   ]
         self.nbparties=0
+        self.nbpartiesbons=0
         self.niveau_max=0
         self.distance_parcourue=0
         self.mort_avec_dist_min=0
         self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10]
-    def test_succes(self,cube):
-        if nbparties>=1 and not self.s1[2]:
-            s1[2]=True
-            new_succes()
+    def test_succes(self,cube,niv,skpos,liste_succes):
+        for s in self succes:
+            if not s[2]:
+                v=0
+                cond=False
+                if s[3]=="nbp":
+                    v=self.nbparties
+                elif s[3]=="nbpb":
+                    v=self.nbpartiesbons
+                elif s[3]=="cniv":
+                    v=niv
+                elif s[3]=="bmor":
+                    v=self.mort_avec_dist_min
+                elif s[3]=="nbsk":
+                    v=len(skpos)
+                elif s[3]=="distt":
+                    v=cube.dist_parc+self.distance_parcourue
+                if s[4]==">=":
+                    cond=s[5]>=v
+                elif s[4]==">":
+                    cond=s[5]>=v
+                elif s[4]=="==":
+                    cond=s[5]>=v
+                elif s[4]=="<=":
+                    cond=s[5]>=v
+                elif s[4]=="<":
+                    cond=s[5]>=v
+                elif s[4]=="!=":
+                    cond=s[5]!=v
+                if cond:
+                    s[2]=True
+                    liste_succes=new_succes(s,liste_succes)
+    return liste_succes
 
 cac="|"
 cacc="#"
@@ -117,31 +174,6 @@ def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(
 
 tpage=int((rx(750)/ry(150))*3)
 
-dimg="images/"
-
-sa1=["skin4-1.png","skin4-2.png","skin4-3.png","skin4-4.png","skin4-5.png","skin4-6.png","skin4-7.png","skin4-8.png","skin4-9.png","skin4-10.png","skin4-11.png","skin4-12.png","skin4-13.png","skin4-12.png","skin4-11.png","skin4-10.png","skin4-9.png","skin4-8.png","skin4-7.png","skin4-6.png","skin4-5.png","skin4-4.png","skin4-3.png","skin4-2.png","skin4-1.png"]
-sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-5.png","skin6-6.png","skin6-7.png","skin6-8.png","skin6-9.png","skin6-10.png","skin6-11.png","skin6-12.png","skin6-13.png","skin6-14.png","skin6-15.png","skin6-16.png","skin6-17.png","skin6-18.png","skin6-19.png","skin6-20.png"]
-sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
-sa4=["skin11-1.png","skin11-2.png","skin11-3.png","skin11-4.png","skin11-5.png","skin11-6.png","skin11-5.png","skin11-4.png","skin11-3.png","skin11-2.png"]
-sa5=["skin13-1.png","skin13-2.png","skin13-3.png","skin13-4.png","skin13-5.png"]
-sa6=["skin14-1.png","skin14-2.png","skin14-3.png","skin14-4.png","skin14-5.png","skin14-6.png","skin14-7.png","skin14-8.png","skin14-9.png"]
-sa7=["skin15-1.png","skin15-2.png","skin15-3.png","skin15-4.png","skin15-5.png","skin15-6.png","skin15-7.png","skin15-8.png","skin15-9.png","skin15-10.png","skin15-11.png","skin15-12.png","skin15-13.png"]
-sa8=["skin16-1.png","skin16-2.png","skin16-3.png","skin16-4.png","skin16-5.png"]
-sa9=["skin17-1.png","skin17-2.png","skin17-3.png","skin17-4.png","skin17-5.png"]
-skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
-[["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0],
-[sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0],[["skin18.png"],1,False,0],[["skin19.png"],1,False,0],[["skin20.png"],1,False,0],[["skin21.png"],1,False,0]
-,[["skin22.png"],1,False,0],[["skin23.png"],1,False,0],[["skin24.png"],1,False,0],[["skin25.png"],1,False,0],[["skin26.png"],1,False,0],[["skin27.png"],1,False,0]
-,[["skin28.png"],1,False,0],[["skin29.png"],1,False,0],[["skin30.png"],1,False,0],[["skin31.png"],1,False,0],[["skin32.png"],1,False,0],[["skin33.png"],1,False,0]
-,[["skin34.png"],1,False,0],[["skin35.png"],1,False,0],[["skin36.png"],1,False,0],[["skin37.png"],1,False,0],[["skin38.png"],1,False,0],[["skin39.png"],1,False,0],[["skin40.png"],1,False,0]
-,[["skin41.png"],1,False,0],[["skin42.png"],1,False,0],[["skin43.png"],1,False,0],[["skin44.png"],1,False,0],[["skin45.png"],1,False,0],[["skin46.png"],1,False,0],[["skin47.png"],1,False,0]
-,[["skin48.png"],1,False,0],[["skin49.png"],1,False,0],[["skin50.png"],1,False,0],[["skin51.png"],1,False,0],[["skin52.png"],1,False,0],[["skin53.png"],1,False,0],[["skin54.png"],1,False,0]
-,[["skin55.png"],1,False,0],[["skin56.png"],1,False,0],[["skin57.png"],1,False,0],[["skin58.png"],1,False,0],[["skin59.png"],1,False,0],[["skin60.png"],1,False,0],[["skin61.png"],1,False,0]
-,[["skin62.png"],1,False,0],[["skin63.png"],1,False,0],[["skin64.png"],1,False,0],[["skin65.png"],1,False,0],[["skin67.png"],1,False,0],[["skin68.png"],1,False,0]
-,[["skin69.png"],0,False,0],[["skin70.png"],0,False,0],[["skin71.png"],0,False,0],[["skin72.png"],0,False,0],[["skin73.png"],0,False,0]
-]
-#0=imgs 1 = rarete 2=rotate 3=agl base
-#raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
 
 skins_com=[]
 skins_rar=[]
@@ -473,7 +505,7 @@ def ecran_dep_lvl(mape):
     pygame.display.flip()
     time.sleep(3)
 
-def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot):
+def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
@@ -529,6 +561,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
 def main_jeu(skin_equipe,skins_possedes):
+	liste_succes=[]
     tcb=rx(100)
     niv=1
     ecran_chargement()
@@ -573,7 +606,7 @@ def main_jeu(skin_equipe,skins_possedes):
         #mape
         mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot)
+        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes)
         #event
         for event in pygame.event.get():
             if event.type==QUIT: exit()
