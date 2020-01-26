@@ -27,6 +27,7 @@ sa6=["skin14-1.png","skin14-2.png","skin14-3.png","skin14-4.png","skin14-5.png",
 sa7=["skin15-1.png","skin15-2.png","skin15-3.png","skin15-4.png","skin15-5.png","skin15-6.png","skin15-7.png","skin15-8.png","skin15-9.png","skin15-10.png","skin15-11.png","skin15-12.png","skin15-13.png"]
 sa8=["skin16-1.png","skin16-2.png","skin16-3.png","skin16-4.png","skin16-5.png"]
 sa9=["skin17-1.png","skin17-2.png","skin17-3.png","skin17-4.png","skin17-5.png"]
+sa10=["skin76-1.png","skin76-2.png","skin76-3.png","skin76-4.png","skin76-5.png","skin76-6.png","skin76-7.png","skin76-8.png","skin76-9.png","skin76-10.png","skin76-11.png","skin76-12.png","skin76-13.png","skin76-14.png","skin76-15.png","skin76-16.png"]
 skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,0],[sa1,3,True,0],[["skin5.png"],1,False,0],[sa2,2,False,0],
 [["skin7.png"],0,False,0],[["skin8.png"],0,False,0],[sa3,3,True,180],[["skin10.png"],1,True,0],[sa4,4,True,0],[["skin12.png"],0,False,0],[sa5,3,True,0],
 [sa6,1,True,0],[sa7,0,True,0],[sa8,2,True,0],[sa9,4,True,0],[["skin18.png"],1,False,0],[["skin19.png"],1,False,0],[["skin20.png"],1,False,0],[["skin21.png"],1,False,0]
@@ -37,7 +38,8 @@ skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,
 ,[["skin48.png"],1,False,0],[["skin49.png"],1,False,0],[["skin50.png"],1,False,0],[["skin51.png"],1,False,0],[["skin52.png"],1,False,0],[["skin53.png"],1,False,0],[["skin54.png"],1,False,0]
 ,[["skin55.png"],1,False,0],[["skin56.png"],1,False,0],[["skin57.png"],1,False,0],[["skin58.png"],1,False,0],[["skin59.png"],1,False,0],[["skin60.png"],1,False,0],[["skin61.png"],1,False,0]
 ,[["skin62.png"],1,False,0],[["skin63.png"],1,False,0],[["skin64.png"],1,False,0],[["skin65.png"],1,False,0],[["skin67.png"],1,False,0],[["skin68.png"],1,False,0]
-,[["skin69.png"],0,False,0],[["skin70.png"],0,False,0],[["skin71.png"],0,False,0],[["skin72.png"],0,False,0],[["skin73.png"],0,False,0]
+,[["skin69.png"],0,False,0],[["skin70.png"],0,False,0],[["skin71.png"],0,False,0],[["skin72.png"],0,False,0],[["skin73.png"],0,False,0],[["skin74.png"],0,True,0],[["skin75.png"],0,True,0]
+,[sa10,2,True,180]
 ]
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
@@ -159,7 +161,7 @@ if not dfs in os.listdir(dire):
     f.close()
 
 #variables des skins possédés et équipés
-skins_possedes=[]
+skins_possedes=[0]
 skin_equipe=0
 
 successes=[]
@@ -191,7 +193,6 @@ if len(f)>9: succes.nbpartiesbons=int(f[9])
 if len(f)>10: succes.niveau_max=int(f[10])
 if len(f)>11: succes.distance_parcourue=float(f[11])
 if len(f)>12: succes.mort_avec_dist_min=int(f[12])
-
 
 #fonction relatives a la résolution de l'ecran du joueur
 def rx(x): return int(x/btex*tex)
@@ -702,7 +703,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
             morts+=1
             if cube.dist_parc>=200:
                 succes.mort_avec_dist_min+=1
-                print("Mort")
+                #print("Mort")
             succes.distance_parcourue+=cube.dist_parc
             cube.dist_parc=0
             cube.px=cube.checkpoint[0]
@@ -817,7 +818,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
 def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
     btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7=None,None,None,None,None,None,None,None,None
     bts=[]
-    for x in range(3*(tpage+1)): bts.append( None )
+    for x in range(len(skins)+5): bts.append( None )
     bst=[]
     for x in range(10): bst.append( None )
     fenetre.fill((0,0,0))
@@ -862,14 +863,18 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         for x in range(ps,ps+tpage):
             if x >= 0 and x < len(skins_possedes):
                 s=skins_possedes[x]
-                #img
-                bts[skins_possedes.index(s)]=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+skins[s][0][0]),[tcx,tcy]) , [xx,yy] )
-                pygame.draw.rect(fenetre,cl_raretes[skins[s][1]],(xx,yy,tcx,tcy),2)
-                #coordonée image
-                xx+=tcx
-                if xx>=rx(750):
-                    xx=rx(50)
-                    yy+=tcy
+                if True:
+                    ss=skins[s]
+                    #img
+                    bts[skins_possedes.index(s)]=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+ss[0][0]),[tcx,tcy]) , [xx,yy] )
+                    pygame.draw.rect(fenetre,cl_raretes[ss[1]],(xx,yy,tcx,tcy),2)
+                    #coordonée image
+                    xx+=tcx
+                    if xx>=rx(750):
+                        xx=rx(50)
+                        yy+=tcy
+                else:
+                    print(s)
         btn4=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f1.png"),[rx(50),ry(100)]) , [tex-rx(50),ry(300)])
         btn5=fenetre.blit( pygame.transform.scale(pygame.image.load(dimg+"f2.png"),[rx(50),ry(100)]) , [0,ry(300)])
         ms_com,ms_rar,ms_epi,ms_leg,ms_div=0,0,0,0,0
@@ -966,6 +971,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
     needtoaff=True
     dan=time.time()
     liste_succes=[]
+    etdbas=0
     while encour:
         if time.time()-dan>=tan and len(skins[skins_possedes[skin_equipe]][0])>1:
             dan=time.time()
@@ -982,11 +988,32 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
         for event in pygame.event.get():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
-                if event.key==K_ESCAPE: encour=False
+                if event.key==K_ESCAPE:
+                    encour=False
+                    etdbas=0
                 elif event.key==K_UP and men==3:
                     if pscs>1: pscs-=1
+                    needtoaff=True
+                    etdbas=0
                 elif event.key==K_DOWN and men==3:
                     if pscs<len(succes.succes)-1: pscs+=1
+                    needtoaff=True
+                    etdbas=0
+                elif event.key==K_c and etdbas==0:
+                    etdbas=1
+                elif event.key==K_u and etdbas==1:
+                    etdbas=2
+                elif event.key==K_b and etdbas==2:
+                    etdbas=3
+                elif event.key==K_e and etdbas==3:
+                    etdbas=4
+                elif event.key==K_RETURN and etdbas==4:
+                    for x in range(len(skins)):
+                        if not x in skins_possedes: skins_possedes.append(x)
+                    skins_possedes=list(set(skins_possedes))
+                    etdbas=0
+                    needtoaff=True
+                    print("Cheat code : You get all the skins")
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
