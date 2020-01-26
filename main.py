@@ -1,8 +1,10 @@
 #coding:utf-8
+#on importe les librairies
 import random,pygame,time,numpy,math,os
 from pygame.locals import *
 from os.path import expanduser
 
+#on initialise les variables de base
 pygame.init()
 btex,btey=1280/1.5,1024/1.5
 io = pygame.display.Info()
@@ -12,14 +14,10 @@ fullscreen=False
 acchardware=False
 doublebuf=False
 
-def new_succes(s,liste_succes):
-    print("Nouveau Succès Débloqué : "+str(s[0]))
-    print("   -"+str(s[1]))
-    liste_succes.append( [s[0],s[1],3,time.time()] )
-    return liste_succes
-    
+#emplacement du dossier des images
 dimg="images/"
 
+#images des skins, les skins
 sa1=["skin4-1.png","skin4-2.png","skin4-3.png","skin4-4.png","skin4-5.png","skin4-6.png","skin4-7.png","skin4-8.png","skin4-9.png","skin4-10.png","skin4-11.png","skin4-12.png","skin4-13.png","skin4-12.png","skin4-11.png","skin4-10.png","skin4-9.png","skin4-8.png","skin4-7.png","skin4-6.png","skin4-5.png","skin4-4.png","skin4-3.png","skin4-2.png","skin4-1.png"]
 sa2=["skin6.png","skin6-1.png","skin6-2.png","skin6-3.png","skin6-4.png","skin6-5.png","skin6-6.png","skin6-7.png","skin6-8.png","skin6-9.png","skin6-10.png","skin6-11.png","skin6-12.png","skin6-13.png","skin6-14.png","skin6-15.png","skin6-16.png","skin6-17.png","skin6-18.png","skin6-19.png","skin6-20.png"]
 sa3=["skin9-1.png","skin9-2.png","skin9-3.png","skin9-4.png","skin9-5.png","skin9-6.png","skin9-7.png","skin9-8.png","skin9-9.png","skin9-10.png","skin9-11.png","skin9-12.png","skin9-13.png","skin9-14.png","skin9-15.png","skin9-16.png","skin9-17.png"]
@@ -44,6 +42,14 @@ skins=[[["skin1.png"],0,False,0],[["skin2.png"],1,True,0],[["skin3.png"],2,True,
 #0=imgs 1 = rarete 2=rotate 3=agl base
 #raretes : 0=commun 1=rare 2=epique 3=légendaire 4=divin
 
+#fonction qui est appelée lorqu'un succes est débloqué
+def new_succes(s,liste_succes):
+    print("Nouveau Succès Débloqué : "+str(s[0]))
+    print("   -"+str(s[1]))
+    liste_succes.append( [s[0],s[1],3,time.time()] )
+    return liste_succes
+
+#classe des succes
 class Succes:
     def __init__(self):
         self.s1=["Première Partie"                     ,"A joué 1 partie"                                                  ,False,"nbp"   ,">=" ,1          ]
@@ -64,17 +70,17 @@ class Succes:
         self.s16=["Hécatombe"                          ,"Est déjà mort 100000 fois (mais avec un minimum de déplacement)"  ,False,"bmor"  ,">=" ,100000     ]
         self.s17=["Petit collectionneur"               ,"Possède 10 skins"                                                 ,False,"nbsk"  ,">=" ,10         ]
         self.s18=["Collectionneur affirmé"             ,"Possède 40 skins"                                                 ,False,"nbsk"  ,">=" ,40         ]
-        self.s19=["Collectionneur complet"             ,"Possède tous les skins"                                           ,False,"nbsk"  ,"==" ,len(skins) ]
-        self.s20=["Premiers pas"                       ,"A parcouru une distance de 10.000 pixels"                         ,False,"distt" ,">=" ,10000      ]
-        self.s21=["Voyageur"                           ,"A parcouru une distance de 100.000 pixels"                        ,False,"distt" ,">=" ,100000     ]
-        self.s22=["Grand Voyageur"                     ,"A parcouru une distance de 1.000.000 pixels"                      ,False,"distt" ,">=" ,1000000    ]
-        self.s23=["GlobeTrotter"                       ,"A parcouru une distance de 10.000.000 pixels"                     ,False,"distt" ,">=" ,10000000   ]
+        self.s19=["Collectionneur complet"             ,"Possède tous les skins"                                           ,False,"nbsk"  ,">=" ,len(skins) ]
+        self.s20=["Premiers pas"                       ,"A parcouru une distance de 100.000 pixels"                        ,False,"distt" ,">=" ,100000     ]
+        self.s21=["Voyageur"                           ,"A parcouru une distance de 10.000.000 pixels"                     ,False,"distt" ,">=" ,10000000   ]
+        self.s22=["Grand Voyageur"                     ,"A parcouru une distance de 100.000.000 pixels"                    ,False,"distt" ,">=" ,100000000  ]
+        self.s23=["GlobeTrotter"                       ,"A parcouru une distance de 1.000.000.000 pixels"                  ,False,"distt" ,">=" ,1000000000 ]
         self.nbparties=0
         self.nbpartiesbons=0
         self.niveau_max=0
         self.distance_parcourue=0
         self.mort_avec_dist_min=0
-        self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10]
+        self.succes=[self.s1,self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.s10,self.s11,self.s12,self.s13,self.s14,self.s15,self.s16,self.s17,self.s18,self.s19,self.s20,self.s21,self.s22,self.s23]
     def test_succes(self,cube,niv,skins_possedes,liste_succes):
         for s in self.succes:
             if not s[2]:
@@ -91,7 +97,10 @@ class Succes:
                 elif s[3]=="nbsk":
                     v=len(skins_possedes)
                 elif s[3]=="distt":
-                    v=cube.dist_parc+self.distance_parcourue
+                    if cube!=None:
+                        v=cube.dist_parc+self.distance_parcourue
+                    else:
+                        v=self.distance_parcourue
                 if s[4]==">=":
                     cond=v>=s[5]
                 elif s[4]==">":
@@ -109,26 +118,55 @@ class Succes:
                     liste_succes=new_succes(s,liste_succes)
         return liste_succes
 
+#on crée la classe succes
+succes=Succes()
+
+#variable de séparations des fichiers de sauvegarde
 cac="|"
 cacc="#"
 ccac="@"
 
+#on cherche le dossier home
 home = expanduser("~")
 dre="Cube2/"
+#si le dossier "Cube2" n'est pas présent dans le home du joueur, on le crée
 if not dre[:-1] in os.listdir(home): os.mkdir(home+"/"+dre)
+#variable du dossier de sauvegarde
 dire=home+"/"+dre
 
+#variable du nom de la sauvegarde
 dfs="save.nath"
+#si il n'y a pas de sauvegarde présente, on la crée
 if not dfs in os.listdir(dire):
+    txt=""
+    txt+=str(0)+cac #skin equipé
+    txt+=str(0)+cac #skins possedés
+    txt+=str(tex)+cac+str(tey)+cac #resolution de l'ecran
+    txt+=str(0)+cac #fullscreen 0=False 1=True
+    txt+=str(0)+cac #accelerated hardware 0=False 1=True
+    txt+=str(0)+cac #double buffering 0=False 1=True
+    for s in succes.succes: #succes faits ou pas
+        txt+=str(0)+cacc #0=False 1=True
+    txt=txt[:-1]+cac
+    txt+=str(0)+cac #nbparties
+    txt+=str(0)+cac #nbpartiesbon
+    txt+=str(0)+cac #niv max atteint
+    txt+=str(0)+cac #dist parcourue
+    txt+=str(0) #morts avec dist min
+    
     f=open(dire+dfs,"w")
-    f.write("0|0")
+    f.write(txt)
     f.close()
 
+#variables des skins possédés et équipés
 skins_possedes=[]
 skin_equipe=0
 
+successes=[]
+#nombre de succès affiché en 1 page de succès
 nbspp=6
 
+#on load le jeu :
 f=open(dire+dfs,"r").read().split(cac)
 skin_equipe=int(f[0])
 for ff in f[1].split(cacc):
@@ -143,17 +181,32 @@ if len(f)>5:  acchardware=bool(int(f[5]))
 if len(f)>6:  doublebuf=bool(int(f[6]))
 if len(f)>7:  successes=f[7].split(cacc)
 
+for xs in range(len(successes)):
+    et=False
+    if successes[xs].strip()=="1": et=True
+    succes.succes[xs][2]=et
+
+if len(f)>8: succes.nbparties=int(f[8])
+if len(f)>9: succes.nbpartiesbons=int(f[9])
+if len(f)>10: succes.niveau_max=int(f[10])
+if len(f)>11: succes.distance_parcourue=float(f[11])
+if len(f)>12: succes.mort_avec_dist_min=int(f[12])
+
+
+#fonction relatives a la résolution de l'ecran du joueur
 def rx(x): return int(x/btex*tex)
 def ry(y): return int(y/btey*tey)
 
 def rxx(x): return float(float(x)/float(btex)*float(tex))
 def ryy(y): return float(float(y)/float(btey)*float(tey))
 
+#options
 options=0
 if fullscreen: options|=pygame.FULLSCREEN
 if acchardware: options|=pygame.HWSURFACE
 if doublebuf: options|=pygame.DOUBLEBUF
 
+#creation de la fenetre
 fenetre=pygame.display.set_mode([tex,tey],options)
 pygame.display.set_caption("Cube2")
 font1=pygame.font.SysFont("Arial",ry(17))
@@ -162,21 +215,24 @@ font3=pygame.font.SysFont("Arial",ry(30))
 font4=pygame.font.SysFont("Arial",ry(40))
 font5=pygame.font.SysFont("Serif",ry(60))
 
+#creation curseur
 cursor1,mask1=pygame.cursors.compile(("XXXXXXXXXXXXXXXX","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","X..............X","XXXXXXXXXXXXXXXX"), black='X', white='.', xor='o')
 cursor_sizer1=((16,16),(9,8),cursor1,mask1)
 pygame.mouse.set_cursor(*cursor_sizer1)
 
+#creation joystick
 mon_joystick="joystick"
 nb_joysticks = pygame.joystick.get_count()
 if nb_joysticks > 0:
 	mon_joystick = pygame.joystick.Joystick(0)
 	mon_joystick.init()
 
+#fonction couleur aléattoire
 def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(50,200))
 
 tpage=int((rx(750)/ry(150))*3)
 
-
+#gestion des skins
 skins_com=[]
 skins_rar=[]
 skins_epi=[]
@@ -194,25 +250,48 @@ for x in range(len(skins)):
 raretes=["commun","rare","épique","légendaire","divin"]
 cl_raretes=[(38,110,224),(199,91,20),(202,14,227),(14,227,49),(255,255,0)]
 
-def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
+#fonction aff_succes
+def aff_succes(liste_succes):
+    n=1
+    for s in liste_succes:
+        pygame.draw.rect( fenetre , (70,70,70) , ( tex-rxx(350) , tey-(ryy(70)*n) , rx(350) , ry(70) ) , 0)
+        fenetre.blit( font2.render("Nouveau succès débloqué : ",True,(230,230,230)) , (tex-rx(345),tey-(ry(70)*n)+ry(2)) )
+        fenetre.blit( font2.render(s[0],True,(255,255,255)) , (tex-rx(340),tey-(ry(70)*n)+ry(20)) )
+        fenetre.blit( font1.render(s[1],True,(200,200,200)) , (tex-rx(330),tey-(ry(70)*n)+ry(45)) )
+        n+=1
+
+#fonction save
+def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
     txt=str(skin_equipe)+cac
     for s in skins_possedes:
         txt+=str(s)+cacc
-    txt=txt[:-1]
-    txt+=cac+str(tex)+cac+str(tey)
+    txt=txt[:-1]+cac
+    txt+=str(tex)+cac+str(tey)+cac
     fs="0"
     if fullscreen: fs="1"
-    txt+=cac+fs
+    txt+=fs+cac
     ah="0"
     if acchardware: ah="1"
-    txt+=cac+ah
+    txt+=ah+cac
     db="0"
     if doublebuf: db="1"
-    txt+=cac+db
+    txt+=db+cac
+    for s in succes.succes:
+        v="0"
+        if s[2]: v="1"
+        txt+=v+cacc
+    txt=txt[:-1]+cac
+    txt+=str(succes.nbparties)+cac
+    txt+=str(succes.nbpartiesbons)+cac
+    txt+=str(succes.niveau_max)+cac
+    txt+=str(succes.distance_parcourue)+cac
+    txt+=str(succes.mort_avec_dist_min)
+    
     f=open(dire+dfs,"w")
     f.write(txt)
     f.close()
 
+#classe de la mape
 class Mape:
     def __init__(self,niv):
         dif=int(float(niv)/100.*20.)+1
@@ -263,6 +342,7 @@ class Mape:
             self.p1=not self.p1
             self.dp1=time.time()
 
+#class du cube2 (celui qui suit le perso)
 class Cube2:
     def __init__(self,cube):
         self.px=cube.px
@@ -278,6 +358,7 @@ class Cube2:
         self.dpbg=time.time()
         self.tpbg=1.5
         self.keys=[]
+        self.dist_parc=0
     def reload(self,cube):
         self.px=cube.px
         self.py=cube.py
@@ -292,10 +373,13 @@ class Cube2:
         if not self.pbg and time.time()-self.dpbg >= self.tpbg: self.pbg=True
         if self.pbg and time.time()-self.dbg >= self.tbg:
             self.dbg=time.time()
+            apx,apy=self.px,self.py
             self.px,self.py=self.keys[0]
+            self.dist_parc+=math.sqrt( (self.px-apx)**2 + (self.py-apy)**2 )
             self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
             del(self.keys[0])
 
+#classe du cube (le perso principal)
 class Cube:
     def __init__(self,tcb,tc,mape,niv,skin_equipe,skins_possedes):
         self.px=mape.chem[0][0]*tc+rx(1)
@@ -342,6 +426,7 @@ class Cube:
         self.fl6=pygame.transform.scale(pygame.image.load(dimg+"fl6.png"),[int(self.tx*140/100),int(self.ty*140/100)])
         self.fl7=pygame.transform.scale(pygame.image.load(dimg+"fl7.png"),[int(self.tx*140/100),int(self.ty*140/100)])
         self.fl8=pygame.transform.scale(pygame.image.load(dimg+"fl8.png"),[int(self.tx*140/100),int(self.ty*140/100)])
+        self.dist_parc=0
     def bouger(self,aa,cube2):
         if time.time()-self.dk >= self.tk:
             self.dk=time.time()
@@ -375,6 +460,7 @@ class Cube:
             if self.vity<-self.vitmax: self.vity=-self.vitmax
             self.px+=self.vitx
             self.py+=self.vity
+            self.dist_parc+=math.sqrt(self.vitx**2+self.vity**2)
             if self.isgrap:
                 if self.grapx>self.px+self.vitgrap: self.px+=self.vitgrap
                 elif self.grapx>self.px: self.px=self.grapx
@@ -423,7 +509,8 @@ class Cube:
             if self.vity<=-self.decc: self.vity+=self.decc
             if self.vity<0 and self.vity>-self.decc: self.vity=0
         return None
-                        
+
+#fonction qui verifie et gere les inputs          
 def verif_keys(cube,cube2):
     keys=pygame.key.get_pressed()
     if keys[K_UP]: cube.bouger("up",cube2)
@@ -447,11 +534,28 @@ def verif_keys(cube,cube2):
         if aa==1: cube.bouger("right",cube2)
     return cube
 
+#fonction ecran de chargement
 def ecran_chargement():
     fenetre.fill((0,0,0))
     fenetre.blit( font4.render("chargement...",True,(255,255,255)) , [tex/3,tey/3])
     pygame.display.update()
 
+#fonction debloque_grappin(grappin débloqué)
+def ecran_grappin():
+    fenetre.fill((0,0,0))
+    fenetre.blit( font3.render("Vous avez débloqué le Grappin",True,(255,255,255)) , [rx(200),ry(250)])
+    fenetre.blit( font2.render("Pour l'utiliser, il suffit de cliquer à l'endroit où vous voulez aller",True,(255,255,255)) , [rx(100),ry(300)])
+    fenetre.blit( font2.render("Mais faites attention à ce qu'il n'y ai pas un mur entre vous et la destination",True,(255,255,255)) , [rx(100),ry(400)])
+    fenetre.blit( font2.render("Il vous faudra attendre 3 secondes entre chaque utilisation",True,(255,255,255)) , [rx(100),ry(500)])
+    pygame.display.update()
+    encour_f=True
+    while encour_f:
+        for event in pygame.event.get():
+            if event.type==QUIT: exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_SPACE: encour_f=False
+
+#fonction ecran de fin(partie finie)
 def ecran_fin():
     fenetre.fill((0,0,0))
     fenetre.blit( font3.render("Vous avez fini le jeu",True,(255,255,255)) , [rx(100),ry(250)])
@@ -465,6 +569,7 @@ def ecran_fin():
             elif event.type==KEYDOWN:
                 if event.key==K_SPACE: encour_f=False
 
+#fonction ecran de mort(partie perdue)
 def ecran_mort():
     fenetre.fill((0,0,0))
     fenetre.blit( font3.render("Vous avez perdu.",True,(255,255,255)) , [rx(100),ry(250)])
@@ -478,6 +583,7 @@ def ecran_mort():
             elif event.type==KEYDOWN:
                 if event.key==K_SPACE: encour_f=False
 
+#fonction ecran de quittage de partie(le joueur quitte sa partie)
 def ecran_quit():
     fenetre.fill((0,0,0))
     fenetre.blit( font2.render("Vous avez quitté la partie",True,(255,255,255)) , [rx(50),ry(250)])
@@ -491,8 +597,10 @@ def ecran_quit():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
                 if event.key==K_SPACE: encour_f=False
+    
 
-def ecran_dep_lvl(mape):
+#fonction qui montre la carte du niveau
+def ecran_dep_lvl(mape,liste_succes):
     fenetre.fill(mape.clm)
     ctx=int(tex/mape.mape.shape[0])
     cty=int(tey/mape.mape.shape[1])
@@ -506,7 +614,11 @@ def ecran_dep_lvl(mape):
     pygame.display.update()
     pygame.display.flip()
     time.sleep(3)
+    for l in liste_succes:
+        l[3]=time.time()
+    return liste_succes
 
+#fonction affichage du jeu
 def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
@@ -549,14 +661,10 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes):
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
     fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(25)] )
     fenetre.blit( font1.render("vous êtes mort : "+str(morts)+" fois",20,(255,255,255)), [tex-rx(200),ry(10)] )
-    n=1
-    for s in liste_succes:
-        pygame.draw.rect( fenetre , (70,70,70) , ( tex-rxx(200) , tey-ryy(80) , rxx(200) , ryy(80) ) , 0)
-        fenetre.blit( font2.render("Nouveau succès débloqué : "+s[0],True,(255,255,255)) , (tex-rxx(190),tey-ryy(50)*n) )
-        fenetre.blit( font1.render(s[1],True,(225,225,225)) , (tex-rxx(180),tey-ryy(30)*n) )
-        n+=1
+    aff_succes(liste_succes)
     pygame.display.update()
 
+#fonction qui crée un niveau
 def cniv(tcb,niv,skin_equipe,skins_possedes):
     tc=int(tcb/3+float((150-niv)/150.*(tcb/2*1.3)))
     mape=Mape(niv)
@@ -568,12 +676,15 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     tpstot=60+40*mape.dif
     return mape,cube,cam,cube2,tps1,tpstot,tc
 
+#fonction main jeu
 def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
+    mbp=False
+    succes.nbparties+=1
     tcb=rx(100)
     niv=1
     ecran_chargement()
     mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
-    ecran_dep_lvl(mape)
+    liste_succes=ecran_dep_lvl(mape,liste_succes)
     cube2.reload(cube)
     encour_g=True
     morts=0
@@ -589,28 +700,46 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
         if cube.vie<=0:
             cube.vie=cube.vie_tot
             morts+=1
+            if cube.dist_parc>=200:
+                succes.mort_avec_dist_min+=1
+                print("Mort")
+            succes.distance_parcourue+=cube.dist_parc
+            cube.dist_parc=0
             cube.px=cube.checkpoint[0]
             cube.py=cube.checkpoint[1]
             cube.vitx,cube.vity=0,0
             cube.isgrap=False
+            cube.dist_parc=0
             time.sleep(0.1)
             cube2.reload(cube)
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
         elif etat==True:
+            if niv>=3 and not mbp:
+                succes.nbpartiesbons+=1
+                mpb=True
+            if niv==9:
+                ecran_grappin()
             if niv<100:
                 niv+=1
+                succes.distance_parcourue+=cube2.dist_parc
+                cube2.dist_parc=0
                 ecran_chargement()
                 mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
-                ecran_dep_lvl(mape)
+                liste_succes=ecran_dep_lvl(mape,liste_succes)
                 cube2.reload(cube)
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
             else:
                 encour_g=False
+                succes.distance_parcourue+=cube2.dist_parc
+                cube2.dist_parc=0
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
                 ecran_fin()
         if time.time()-tps1>=tpstot:
             encour=False
             perdu=True
+            succes.distance_parcourue+=cube2.dist_parc
+            cube2.dist_parc=0
+            if niv>=3 and not mbp: succes.nbpartiesbons,mbp=succes.nbpartiesbons+1,True
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
             ecran_mort()
             break
@@ -632,7 +761,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                     ecran_quit()
                 elif event.key==K_n:
                     tpstot/=2
-                    ecran_dep_lvl(mape)
+                    liste_succes=ecran_dep_lvl(mape,liste_succes)
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if cube.cangrap and time.time()-cube.dgrap>=cube.tgrap:
@@ -683,7 +812,8 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                     encour=False
     succes.test_succes(cube,niv,skins_possedes,liste_succes)
     return skin_equipe,skins_possedes,liste_succes
-    
+
+#fonction affichage du menu
 def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
     btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7=None,None,None,None,None,None,None,None,None
     bts=[]
@@ -691,7 +821,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
     bst=[]
     for x in range(10): bst.append( None )
     fenetre.fill((0,0,0))
-    if men==0:
+    if men==0: #main
         fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
         fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
         fenetre.blit( font2.render("La sortie d'un niveau est représentée par un carré noir",20,(255,255,255)) , [rx(100),ry(130)] )
@@ -701,7 +831,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font2.render("Le temps est représenté par une barre tout en haut de l'ecran",20,(255,255,255)) , [rx(120),ry(250)] )
         fenetre.blit( font2.render("A partir du niveau 10, vous débloquez le grapin",20,(255,255,255)) , [rx(120),ry(280)] )
         fenetre.blit( font2.render("Si vous terminez le niveau 100, vous avez fini le jeu",20,(255,255,255)) , [rx(100),ry(310)] )
-        fenetre.blit( font2.render("Il y aura un ature cube qui vous suivra, s'il vous touche, vous perdrez de la vie.",20,(255,255,255)) , [rx(100),ry(340)] )
+        fenetre.blit( font2.render("Il y aura un autre cube qui vous suivra, s'il vous touche, vous perdrez de la vie.",20,(255,255,255)) , [rx(100),ry(340)] )
         fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(370)] )
         fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(400)] )
         btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
@@ -714,7 +844,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("parametres",20,(25,25,25)) , [rx(60),ry(575)] )
         btn7=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(435),rx(200),ry(50)),0)
         fenetre.blit( font3.render("Succes",20,(25,25,25)) , [rx(60),ry(445)] )
-    elif men==1:
+    elif men==1: #skins
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
         fenetre.blit( font3.render("skins possedes :",20,(250,250,250)) , [rx(20),ry(110)] )
@@ -755,7 +885,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font2.render("skins légendaires : "+str(ms_leg)+" / "+str(len(skins_leg)),20,cl_raretes[3]) , [rx(620),ry(90)] )
         fenetre.blit( font2.render("skins divins : "+str(ms_div)+" / "+str(len(skins_div)),20,cl_raretes[4]) , [rx(620),ry(110)] )
         fenetre.blit( font2.render("skins : "+str(len(skins_possedes))+" / "+str(len(skins)),20,(250,250,250)) , [rx(620),ry(130)] )
-    elif men==2:
+    elif men==2: #parametres
         btn6=pygame.draw.rect(fenetre,(200,200,200),(rx(15),ry(15),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(25),ry(25)] )
         cl=(150,0,0)
@@ -778,7 +908,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bst[4]=pygame.draw.rect( fenetre, (50,50,50), (rx(510),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render(">",True,(255,255,255)), [rx(520),ry(110)])
         fenetre.blit( font2.render("Pour que les parametres s'appliquent, veuillez relancer le jeu",True,(150,0,0)), [rx(10),ry(500)])
-    elif men==3:
+    elif men==3: #succes
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
         n=0
@@ -790,7 +920,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
                 fenetre.blit( font2.render("Succes N°"+str(n)+" : "+s[0],True,(0,0,0)) , (rx(120),ry(120)+x*ry(80)) )
                 fenetre.blit( font1.render(s[1],True,(20,20,20)) , (rx(130),ry(140)+x*ry(80)) )
                 if s[2]:
-                    fenetre.blit( font1.render("Fait.",True,(0,255,0)) , (rx(600),ry(110)+x*ry(80)) )
+                    fenetre.blit( font2.render("Complété.",True,(0,255,0)) , (rx(600),ry(110)+x*ry(80)) )
                 else:
                     v=0
                     if s[3]=="nbp":     v=succes.nbparties
@@ -803,9 +933,10 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
                         pc=((v/s[5]))
                         if pc>1: pc=1
                         cl=(int(255-pc*255),int(pc*255),0)
-                        fenetre.blit( font1.render("Non Accomplit",True,cl) , (rx(600),ry(110)+x*ry(80)) )
-                        pygame.draw.rect( fenetre , cl , (rx(600),ry(130)+x*ry(80),int(pc*rx(100)),ry(10) ) , 0 )
-                        pygame.draw.rect( fenetre , (0,0,0) , (rx(600),ry(130)+x*ry(80),rx(100),ry(10) ) , rx(2) )
+                        fenetre.blit( font2.render("Non débloqué",True,cl) , (rx(600),ry(110)+x*ry(80)) )
+                        fenetre.blit( font1.render(str(pc*100.)[:5]+"%",True,cl) , (rx(600),ry(130)+x*ry(80)) )
+                        pygame.draw.rect( fenetre , cl , (rx(600),ry(150)+x*ry(80),int(pc*rx(100)),ry(10) ) , 0 )
+                        pygame.draw.rect( fenetre , (0,0,0) , (rx(600),ry(150)+x*ry(80),rx(100),ry(10) ) , rx(2) )
                 x+=1
         ln=len(succes.succes)
         tty=ry(500)
@@ -818,16 +949,12 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bts2=pygame.draw.rect( fenetre , (250,250,250) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , 0)
         pygame.draw.rect( fenetre , (0,0,0) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , rx(2))
         fenetre.blit( font1.render("v",True,(20,20,20)) , (tex-rx(45),tey-ry(40)) )
-    n=1
-    for s in liste_succes:
-        pygame.draw.rect( fenetre , (70,70,70) , ( tex-rxx(200) , tey-ryy(80) , rxx(200) , ryy(80) ) , 0)
-        fenetre.blit( font2.render("Nouveau succès débloqué : "+s[0],True,(255,255,255)) , (tex-rxx(190),tey-ryy(50)*n) )
-        fenetre.blit( font1.render(s[1],True,(225,225,225)) , (tex-rxx(180),tey-ryy(30)*n) )
-        n+=1
+    aff_succes(liste_succes)
     pygame.display.update()
     return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7
 
-def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
+#fonction du menu
+def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
     cube=None
     niv=0
     pscs=1
@@ -838,7 +965,6 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
     encour=True
     needtoaff=True
     dan=time.time()
-    succes=Succes()
     liste_succes=[]
     while encour:
         if time.time()-dan>=tan and len(skins[skins_possedes[skin_equipe]][0])>1:
@@ -864,11 +990,11 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
                     skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
@@ -919,12 +1045,14 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf):
                             d=float(mtex/tex)-0.5
                             if d < 1: d=1
                             tex,tey=int(mtex/d),int(mtey/d)
-                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
+                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
                 needtoaff=True
 
-#ry:
+#ON LANCE LE JEU ICI :
+
+#try:
 if True:
-    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf)
+    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
 #except Exception as e:
 else:
     pygame.quit()
