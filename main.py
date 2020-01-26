@@ -1083,7 +1083,7 @@ if True:
 #except Exception as e:
 else:
     pygame.quit()
-    if e!="name 'exit' is not defined":
+    if e!="global name 'exit' is not defined":
         print(e)
-        input("please send this at : nathpython@gmail.com")
+        raw_input("please send this at : nathpython@gmail.com")
 
