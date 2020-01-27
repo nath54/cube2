@@ -785,7 +785,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
     mbp=False
     succes.nbparties+=1
     tcb=rx(100)
-    niv=60
+    niv=1
     ecran_chargement()
     mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
     ecran_niv(liste_cles,niv)
@@ -962,6 +962,25 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("parametres",20,(25,25,25)) , [rx(60),ry(575)] )
         btn7=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(435),rx(200),ry(50)),0)
         fenetre.blit( font3.render("Succes",20,(25,25,25)) , [rx(60),ry(445)] )
+    elif men==4:
+        fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
+        fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
+        fenetre.blit( font2.render("La sortie d'un niveau est représentée par un carré noir",20,(255,255,255)) , [rx(100),ry(130)] )
+        fenetre.blit( font2.render("Vous dirigez un carré blanc avec les flèches du clavier",20,(255,255,255)) , [rx(100),ry(160)] )
+        fenetre.blit( font2.render("Si vous touchez un mur, vous revenez au point de départ",20,(255,255,255)) , [rx(100),ry(190)] )
+        fenetre.blit( font2.render("Il y aura du temps pour finir le niveau",20,(255,255,255)) , [rx(100),ry(220)] )
+        fenetre.blit( font2.render("Le temps est représenté par une barre tout en haut de l'ecran",20,(255,255,255)) , [rx(120),ry(250)] )
+        fenetre.blit( font2.render("A partir du niveau 10, vous débloquez le grapin",20,(255,255,255)) , [rx(120),ry(280)] )
+        fenetre.blit( font2.render("Si vous terminez le niveau 100, vous avez fini le jeu",20,(255,255,255)) , [rx(100),ry(310)] )
+        fenetre.blit( font2.render("Il y aura un autre cube qui vous suivra, s'il vous touche, vous perdrez de la vie.",20,(255,255,255)) , [rx(100),ry(340)] )
+        fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(370)] )
+        fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(400)] )
+        btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
+        fenetre.blit( font4.render("Jouer",20,(255,255,255)) , [rx(350),ry(520)] )
+        btn2=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(600),rx(200),ry(75)),0)
+        fenetre.blit( font4.render("quitter",20,(255,255,255)) , [rx(350),ry(620)] )
+        btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(500),rx(100),ry(50)),0)
+        
     elif men==1: #skins
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
