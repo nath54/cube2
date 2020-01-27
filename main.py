@@ -201,6 +201,15 @@ def ry(y): return int(y/btey*tey)
 def rxx(x): return float(float(x)/float(btex)*float(tex))
 def ryy(y): return float(float(y)/float(btey)*float(tey))
 
+#fonction qui retourne l'inverse de la couleur donnée
+
+def inv_cl(cl): return tuple([ 255-cl[0] , 255-cl[1] , 255-cl[2] ] )
+def to_cl(cl):
+    cl=list(cl)
+    for x in range(3):
+        if cl[x]<0: cl[x]=0
+        elif cl[x]>255: cl[x]=255
+    return tuple(cl)
 #options
 options=0
 if fullscreen: options|=pygame.FULLSCREEN
@@ -523,23 +532,22 @@ class Cles:
         self.tx=rx(15)
         self.ty=ry(15)
         self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
-        self.cl=[200,200,0]
+        self.cl=[20,20,20]
+        self.cl2=[0,230,255]
         self.etan=0
         self.dan=time.time()
         self.tpan=0.1
     def update(self):
         if(time.time()-self.dan>=self.tpan):
             self.dan=time.time()
-            if(self.etan<=30):
-                self.cl[0]-=1
-                self.cl[1]+=1
-                self.cl[2]+=3
-            else:
-                self.cl[0]+=1
-                self.cl[1]-=1
-                self.cl[2]-=3
+            if self.etan<10:
+                if self.cl2[1]>=5: self.cl2[1]-=5
+                if self.cl2[2]>=10:self.cl2[2]-=10
+            elif self.etan>=10:
+                if self.cl2[1]<=255-5: self.cl2[1]+=5
+                if self.cl2[1]<=255-10: self.cl2[2]+=10
             self.etan+=1
-            if(self.etan==60):
+            if(self.etan>=20):
                 self.etan=0
             
 		
@@ -581,6 +589,7 @@ def ecran_grappin():
     fenetre.blit( font2.render("Pour l'utiliser, il suffit de cliquer à l'endroit où vous voulez aller",True,(255,255,255)) , [rx(100),ry(300)])
     fenetre.blit( font2.render("Mais faites attention à ce qu'il n'y ai pas un mur entre vous et la destination",True,(255,255,255)) , [rx(100),ry(400)])
     fenetre.blit( font2.render("Il vous faudra attendre 3 secondes entre chaque utilisation",True,(255,255,255)) , [rx(100),ry(500)])
+    fenetre.blit( font3.render("Appuyez sur 'espace' pour continuer",True,(255,255,255)) , [rx(100),ry(650)])
     pygame.display.update()
     encour_f=True
     while encour_f:
@@ -631,10 +640,26 @@ def ecran_quit():
             if event.type==QUIT: exit()
             elif event.type==KEYDOWN:
                 if event.key==K_SPACE: encour_f=False
-    
+
+#fonction ecran de quittage de partie(le joueur quitte sa partie)
+def ecran_niv(liste_cles,niv):
+    fenetre.fill((0,100,150))
+    fenetre.blit( font4.render("Niveau "+str(niv),True,(255,255,255)) , [rx(150),ry(150)])
+    fenetre.blit( font2.render("Vous devez aller à la sortie pour finir le niveau",True,(255,255,255)) , [rx(50),ry(300)])
+    if liste_cles!=[]:
+        fenetre.blit( font2.render("Vous devrez aller chercher "+str(len(liste_cles))+" clés pour pouvoir finir le niveau",True,(255,255,255)) , [rx(50),ry(350)])
+        fenetre.blit( font2.render("Vous pouvez appuyer sur la touche 'c' pour savoir la position des cles restantes",True,(255,255,255)) , [rx(50),ry(450)])
+    fenetre.blit( font2.render("Appuyez sur espace pour continuer",True,(255,255,255)) , [rx(50),ry(600)])
+    pygame.display.update()
+    encour_f=True
+    while encour_f:
+        for event in pygame.event.get():
+            if event.type==QUIT: exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_SPACE: encour_f=False
 
 #fonction qui montre la carte du niveau
-def ecran_dep_lvl(mape,liste_succes,liste_cles):
+def ecran_dep_lvl(mape,liste_succes,liste_cles,tc):
     fenetre.fill(mape.clm)
     ctx=int(tex/mape.mape.shape[0])
     cty=int(tey/mape.mape.shape[1])
@@ -645,6 +670,10 @@ def ecran_dep_lvl(mape,liste_succes,liste_cles):
             if mape.fin==[x,y]: cl=(0,0,0)
             if mape.deb==[x,y]: cl=(255,255,255)
             pygame.draw.rect(fenetre,cl,(x*ctx,y*cty,ctx,cty),0)
+    for cle in liste_cles:
+        case=[int((cle.px/tc)),int((cle.py/tc))]
+        pygame.draw.rect( fenetre , (0,230,255) , (case[0]*ctx,case[1]*cty,rx(4),ry(4) ),0)
+        pygame.draw.rect( fenetre , (0,0,0) , (case[0]*ctx,case[1]*cty,rx(4),ry(4) ),1)
     pygame.display.update()
     pygame.display.flip()
     time.sleep(3)
@@ -653,14 +682,18 @@ def ecran_dep_lvl(mape,liste_succes,liste_cles):
     return liste_succes
 
 #fonction affichage du jeu
-def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles):
+def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
             if x>=0 and x < mape.tx and y >= 0 and y < mape.ty and mape.mape[x,y]!=1:
                 if mape.mape[x,y]==0:
                     cl=mape.cls
-                    if mape.fin==[x,y]: cl=(0,0,0)
+                    if mape.fin==[x,y]:
+                        if len(liste_cles)>0:
+                            cl=(70,70,70)
+                        else:
+                            cl=(0,0,0)
                 if mape.mape[x,y]==2: #piege clignotant
                     if mape.p1: cl=(255,0,0)
                     else: cl=(0,255,0)
@@ -688,6 +721,13 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
     elif niv==1 and mape.fin[0]*tc > cube.px and mape.fin[1]*tc < cube.py: fenetre.blit( cube.fl6 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
     elif niv==1 and mape.fin[0]*tc < cube.px and mape.fin[1]*tc > cube.py: fenetre.blit( cube.fl7 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
     elif niv==1 and mape.fin[0]*tc < cube.px and mape.fin[1]*tc < cube.py: fenetre.blit( cube.fl8 , [cam[0]+cube.px-int(cube.tx*20/100),cam[1]+cube.py-int(cube.ty*20/100)])
+    #cles
+    for cle in liste_cles:
+        if cle.px+cam[0] >= -cle.tx and cle.px+cam[0] <= tex and cle.py+cam[1] >= -cle.ty and cle.py+cam[1] <= tey:
+            pygame.draw.rect( fenetre , to_cl(cle.cl) , (cam[0]+cle.px,cam[1]+cle.py,cle.tx,cle.ty) , 0)
+            pygame.draw.rect( fenetre , to_cl(cle.cl2) , (cam[0]+cle.px+int(cle.tx/2.25),cam[1]+cle.py+int(cle.ty/2.25),int(cle.tx/6),int(cle.ty/6)) , 0)
+            pygame.draw.rect( fenetre , to_cl(cle.cl2) , (cam[0]+cle.px,cam[1]+cle.py,cle.tx,cle.ty) , rx(2))
+        if aff_chem_cles: pygame.draw.line( fenetre , (0,230,255) , (cam[0]+cube.px+cube.tx/2,cam[1]+cube.py+cube.ty/2), (cam[0]+cle.px+cle.tx/2,cam[1]+cle.py+cle.ty/2) , 1)
     #ui
     pygame.draw.rect(fenetre,(255-int((tpstot-(time.time()-tps1))/tpstot*255),int((tpstot-(time.time()-tps1))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps1))/tpstot*tex),ry(10)),0)
     pygame.draw.rect(fenetre,(250,0,0),(rx(100),ry(15),int(cube.vie/cube.vie_tot*rx(200)),ry(15)),0)
@@ -695,6 +735,11 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
     fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(25)] )
     fenetre.blit( font1.render("vous êtes mort : "+str(morts)+" fois",20,(255,255,255)), [tex-rx(200),ry(10)] )
+    #   -cles
+    if len(liste_cles)>0:
+        pygame.draw.rect( fenetre , liste_cles[0].cl , (tex-rx(200),ry(70),rx(180),ry(40) ) , 0)
+        pygame.draw.rect( fenetre , to_cl(liste_cles[0].cl2) , (tex-rx(200),ry(70),rx(180),ry(40) ) , rx(2))
+        fenetre.blit( font1.render("Clés restantes : "+str(len(liste_cles)),True,to_cl(liste_cles[0].cl2)) , [tex-rx(190),ry(75)] )
     aff_succes(liste_succes)
     pygame.display.update()
 
@@ -708,11 +753,31 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     cam=[-cube.px+tex/2,-cube.py+tey/2]
     tps1=time.time()
     tpstot=60+40*mape.dif
+    #cles
     liste_cles=[]
-    if( niv > 10 ):
-        cx,cy=0,0
-        cle=Cles(cx,cy)
-        liste_cles.append( cle )
+    nbcles=0
+    if niv>10: nbcles=1
+    if niv>30: nbcles=2
+    if niv>50: nbcles=3
+    if niv>80: nbcles=4
+    
+    tpstot*=float("1."+str(nbcles))
+   
+    poscles=[]
+    for x in range(nbcles):
+        peut=False
+        sec=0
+        while sec<100 and not peut :
+            cx=random.randint(2,mape.tx-2)
+            cy=random.randint(2,mape.ty-2)
+            if mape.mape[cx,cy]==0 and list(mape.fin)!=[cx,cy]:
+                peut=True
+                cx=cx*tc+random.randint(5,tc-5)
+                cy=cy*tc+random.randint(5,tc-5)
+            sec+=1
+        if peut:
+            cle=Cles(cx,cy)
+            liste_cles.append( cle )
     return mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles
 
 #fonction main jeu
@@ -720,21 +785,28 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
     mbp=False
     succes.nbparties+=1
     tcb=rx(100)
-    niv=1
+    niv=60
     ecran_chargement()
     mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
-    liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles)
+    ecran_niv(liste_cles,niv)
+    liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
     cube2.reload(cube)
     encour_g=True
     morts=0
     fps=0
     succes.test_succes(cube,niv,skins_possedes,liste_succes)
     perdu=False
+    aff_chem_cles=False
+    daff_chem_cles=time.time()
+    taff_chem_cles=3
     while encour_g:
         t1=time.time()
         #cles
         for cle in liste_cles:
             cle.update()
+        if aff_chem_cles and time.time()-daff_chem_cles>taff_chem_cles:
+            daff_chem_cles=time.time()
+            aff_chem_cles=False
         #cube
         cube2.update(cube)
         cube=verif_keys(cube,cube2)
@@ -755,7 +827,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
             time.sleep(0.1)
             cube2.reload(cube)
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
-        elif etat==True:
+        elif etat==True and len(liste_cles)==0:
             if niv>=3 and not mbp:
                 succes.nbpartiesbons+=1
                 mpb=True
@@ -767,7 +839,8 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                 cube2.dist_parc=0
                 ecran_chargement()
                 mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
-                liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles)
+                ecran_niv(liste_cles,niv)
+                liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
                 cube2.reload(cube)
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
             else:
@@ -793,7 +866,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
         #mape
         mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles)
+        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles)
         #event
         for event in pygame.event.get():
             if event.type==QUIT: exit()
@@ -802,8 +875,11 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                     encour_g=False
                     ecran_quit()
                 elif event.key==K_n:
-                    tpstot/=2
-                    liste_succes=ecran_dep_lvl(mape,liste_succes)
+                    tpstot/=1.5
+                    liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
+                elif event.key==K_c:
+                    daff_chem_cles=time.time()
+                    aff_chem_cles=True
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if cube.cangrap and time.time()-cube.dgrap>=cube.tgrap:
@@ -1021,6 +1097,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
             needtoaff=True
         if needtoaff:
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
+            save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
             btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs)
             needtoaff=False
         for s in liste_succes:
@@ -1127,4 +1204,6 @@ else:
     if e!="global name 'exit' is not defined":
         print(e)
         raw_input("please send this at : nathpython@gmail.com")
+
+
 
