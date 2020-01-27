@@ -785,7 +785,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     return mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles
 
 #fonction main jeu
-def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
+def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf):
     mbp=False
     succes.nbparties+=1
     tcb=rx(100)
@@ -827,14 +827,10 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
             cube.py=cube.checkpoint[1]
             cube.vitx,cube.vity=0,0
             cube.isgrap=False
-            cube.dist_parc=0
             time.sleep(0.1)
             cube2.reload(cube)
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
         elif etat==True and len(liste_cles)==0:
-            if niv>=3 and not mbp:
-                succes.nbpartiesbons+=1
-                mpb=True
             if niv==9:
                 ecran_grappin()
             if niv<100:
@@ -873,10 +869,18 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
         aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles)
         #event
         for event in pygame.event.get():
-            if event.type==QUIT: exit()
+            if event.type==QUIT:
+                if niv>=3 and not mbp:
+                    succes.nbpartiesbons+=1
+                    mpb=True
+                save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+                exit()
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE:
                     encour_g=False
+                    if niv>=3 and not mbp:
+                        succes.nbpartiesbons+=1
+                        mpb=True
                     ecran_quit()
                 elif event.key==K_n:
                     tpstot/=1.5
@@ -884,6 +888,16 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                 elif event.key==K_c:
                     daff_chem_cles=time.time()
                     aff_chem_cles=True
+                elif event.key==K_r:
+                    succes.distance_parcourue+=cube.dist_parc
+                    cube.dist_parc=0
+                    cube.px=cube.checkpoint[0]
+                    cube.py=cube.checkpoint[1]
+                    cube.vitx,cube.vity=0,0
+                    cube.isgrap=False
+                    time.sleep(0.1)
+                    cube2.reload(cube)
+                    succes.test_succes(cube,niv,skins_possedes,liste_succes)
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if cube.cangrap and time.time()-cube.dgrap>=cube.tgrap:
@@ -917,7 +931,9 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
         txt="Vous avez gagné un skin divin !"
         cltxt=cl_raretes[4]
     if sg!=None:
+        skp=skins_possedes[skin_equipe]
         skins_possedes.append(sg)
+        skin_equipe=skins_possedes.index(skp)
         skins_possedes=list(set(skins_possedes))
         fenetre.fill((0,0,0))
         fenetre.blit( font4.render(txt,True,cltxt) , [rx(50),ry(100)])
@@ -1088,6 +1104,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
 
 #fonction du menu
 def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
+    skins_possedes=list(set(skins_possedes))
+    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
     cube=None
     niv=0
     pscs=1
@@ -1149,7 +1167,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
-                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes)
+                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
                     save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
