@@ -428,6 +428,7 @@ class Cube:
         self.fl7=pygame.transform.scale(pygame.image.load(dimg+"fl7.png"),[int(self.tx*140/100),int(self.ty*140/100)])
         self.fl8=pygame.transform.scale(pygame.image.load(dimg+"fl8.png"),[int(self.tx*140/100),int(self.ty*140/100)])
         self.dist_parc=0
+        self.cles=[]
     def bouger(self,aa,cube2):
         if time.time()-self.dk >= self.tk:
             self.dk=time.time()
@@ -444,7 +445,7 @@ class Cube:
                 self.vitx+=self.acc
                 if self.rot: self.agl=90+self.ab
             self.img=pygame.transform.rotate(self.imgs[self.an],self.agl)
-    def update(self,mape,tc,cube2):
+    def update(self,mape,tc,cube2,liste_cles):
         #animation
         if time.time()-self.dan>=self.tan:
             self.dan=time.time()
@@ -482,6 +483,10 @@ class Cube:
                         if mape.mape[x,y]==1: self.vie=0
                         if mape.mape[x,y]==2 and mape.p1: self.vie-=50
                         if mape.fin==[x,y]: return True
+            for cle in liste_cles:
+                if self.rect.colliderect( cle.rect ):
+                    self.cles.append( cle )
+                    del( liste_cles[liste_cles.index(cle)])
             if self.px<0:
                 self.vie=0
                 self.px-=self.vitx
@@ -510,6 +515,34 @@ class Cube:
             if self.vity<=-self.decc: self.vity+=self.decc
             if self.vity<0 and self.vity>-self.decc: self.vity=0
         return None
+
+class Cles:
+	def __init__(self,x,y):
+		self.px=x
+		self.py=y
+		self.tx=rx(15)
+		self.ty=ry(15)
+		self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
+		self.cl=[200,200,0]
+		self.etan=0
+		self.dan=time.time()
+		self.tpan=0.1
+    def update(self):
+        if(time.time()-self.dan>=self.tpan):
+            self.dan=time.time()
+            if(self.etan<=30):
+                self.cl[0]-=1
+                self.cl[1]+=1
+                self.cl[2]+=3
+            else:
+                self.cl[0]+=1
+                self.cl[1]-=1
+                self.cl[2]-=3
+            self.etan+=1
+            if(self.etan==60):
+                self.etan=0
+            
+		
 
 #fonction qui verifie et gere les inputs          
 def verif_keys(cube,cube2):
@@ -620,7 +653,7 @@ def ecran_dep_lvl(mape,liste_succes):
     return liste_succes
 
 #fonction affichage du jeu
-def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes):
+def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
@@ -675,7 +708,12 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     cam=[-cube.px+tex/2,-cube.py+tey/2]
     tps1=time.time()
     tpstot=60+40*mape.dif
-    return mape,cube,cam,cube2,tps1,tpstot,tc
+    liste_cles=[]
+    if( niv > 10 ):
+        cx,cy=0,0
+        cle=Cles(cx,cy)
+        liste_cles.append( cle )
+    return mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles
 
 #fonction main jeu
 def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
@@ -684,8 +722,8 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
     tcb=rx(100)
     niv=1
     ecran_chargement()
-    mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
-    liste_succes=ecran_dep_lvl(mape,liste_succes)
+    mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
+    liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles)
     cube2.reload(cube)
     encour_g=True
     morts=0
@@ -725,7 +763,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                 succes.distance_parcourue+=cube2.dist_parc
                 cube2.dist_parc=0
                 ecran_chargement()
-                mape,cube,cam,cube2,tps1,tpstot,tc=cniv(tcb,niv,skin_equipe,skins_possedes)
+                mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
                 liste_succes=ecran_dep_lvl(mape,liste_succes)
                 cube2.reload(cube)
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
@@ -752,7 +790,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
         #mape
         mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes)
+        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles)
         #event
         for event in pygame.event.get():
             if event.type==QUIT: exit()
