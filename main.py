@@ -138,6 +138,9 @@ dire=home+"/"+dre
 
 #variable du nom de la sauvegarde
 dfs="save.nath"
+
+
+affaide=False
 #si il n'y a pas de sauvegarde présente, on la crée
 if not dfs in os.listdir(dire):
     txt=""
@@ -159,6 +162,7 @@ if not dfs in os.listdir(dire):
     f=open(dire+dfs,"w")
     f.write(txt)
     f.close()
+    affaide=True
 
 #variables des skins possédés et équipés
 skins_possedes=[0]
@@ -933,7 +937,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
 
 #fonction affichage du menu
 def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
-    btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7=None,None,None,None,None,None,None,None,None
+    btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7,btn8=None,None,None,None,None,None,None,None,None,None
     bts=[]
     for x in range(len(skins)+5): bts.append( None )
     bst=[]
@@ -941,17 +945,6 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
     fenetre.fill((0,0,0))
     if men==0: #main
         fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
-        fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
-        fenetre.blit( font2.render("La sortie d'un niveau est représentée par un carré noir",20,(255,255,255)) , [rx(100),ry(130)] )
-        fenetre.blit( font2.render("Vous dirigez un carré blanc avec les flèches du clavier",20,(255,255,255)) , [rx(100),ry(160)] )
-        fenetre.blit( font2.render("Si vous touchez un mur, vous revenez au point de départ",20,(255,255,255)) , [rx(100),ry(190)] )
-        fenetre.blit( font2.render("Il y aura du temps pour finir le niveau",20,(255,255,255)) , [rx(100),ry(220)] )
-        fenetre.blit( font2.render("Le temps est représenté par une barre tout en haut de l'ecran",20,(255,255,255)) , [rx(120),ry(250)] )
-        fenetre.blit( font2.render("A partir du niveau 10, vous débloquez le grapin",20,(255,255,255)) , [rx(120),ry(280)] )
-        fenetre.blit( font2.render("Si vous terminez le niveau 100, vous avez fini le jeu",20,(255,255,255)) , [rx(100),ry(310)] )
-        fenetre.blit( font2.render("Il y aura un autre cube qui vous suivra, s'il vous touche, vous perdrez de la vie.",20,(255,255,255)) , [rx(100),ry(340)] )
-        fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(370)] )
-        fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(400)] )
         btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
         fenetre.blit( font4.render("Jouer",20,(255,255,255)) , [rx(350),ry(520)] )
         btn2=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(600),rx(200),ry(75)),0)
@@ -962,8 +955,10 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("parametres",20,(25,25,25)) , [rx(60),ry(575)] )
         btn7=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(435),rx(200),ry(50)),0)
         fenetre.blit( font3.render("Succes",20,(25,25,25)) , [rx(60),ry(445)] )
-    elif men==4:
-        fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
+        btn8=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(335),rx(200),ry(50)),0)
+        fenetre.blit( font3.render("Aide",20,(25,25,25)) , [rx(60),ry(345)] )
+    elif men==4: #explications
+        fenetre.blit( font5.render("Cube2 : Comment Jouer",20,(255,255,255)) , [rx(200),ry(10)] )
         fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
         fenetre.blit( font2.render("La sortie d'un niveau est représentée par un carré noir",20,(255,255,255)) , [rx(100),ry(130)] )
         fenetre.blit( font2.render("Vous dirigez un carré blanc avec les flèches du clavier",20,(255,255,255)) , [rx(100),ry(160)] )
@@ -975,11 +970,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font2.render("Il y aura un autre cube qui vous suivra, s'il vous touche, vous perdrez de la vie.",20,(255,255,255)) , [rx(100),ry(340)] )
         fenetre.blit( font2.render("Vous pouvez quitter le jeu à tout moment en appuyant sur Echap",20,(255,255,255)) , [rx(100),ry(370)] )
         fenetre.blit( font2.render("Bonne chance !",20,(255,255,255)) , [rx(100),ry(400)] )
-        btn=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(500),rx(200),ry(75)),0)
-        fenetre.blit( font4.render("Jouer",20,(255,255,255)) , [rx(350),ry(520)] )
-        btn2=pygame.draw.rect(fenetre,(150,150,150),(rx(300),ry(600),rx(200),ry(75)),0)
-        fenetre.blit( font4.render("quitter",20,(255,255,255)) , [rx(350),ry(620)] )
-        btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(500),rx(100),ry(50)),0)
+        btn3=pygame.draw.rect(fenetre,(100,100,100),(rx(400),ry(500),rx(150),ry(60)),0)
+        fenetre.blit( font2.render("J'ai compris",20,(255,255,255)) , [rx(410),ry(510)] )
         
     elif men==1: #skins
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
@@ -1092,7 +1084,7 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font1.render("v",True,(20,20,20)) , (tex-rx(45),tey-ry(40)) )
     aff_succes(liste_succes)
     pygame.display.update()
-    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7
+    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8
 
 #fonction du menu
 def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
@@ -1102,6 +1094,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
     ps=0
     an=0
     men=0
+    if affaide:
+        men=4
     tan=0.1
     encour=True
     needtoaff=True
@@ -1117,7 +1111,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
         if needtoaff:
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
             save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
-            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs)
+            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs)
             needtoaff=False
         for s in liste_succes:
             if time.time()-s[3]>=s[2]:
@@ -1186,6 +1180,10 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                     an=0
                 elif btn7!=None and btn7.collidepoint(pos):
                     if men==0: men=3
+                    else: men=0
+                    an=0
+                elif btn8!=None and btn8.collidepoint(pos):
+                    if men==0: men=4
                     else: men=0
                     an=0
                 for b in bts:
