@@ -517,16 +517,16 @@ class Cube:
         return None
 
 class Cles:
-	def __init__(self,x,y):
-		self.px=x
-		self.py=y
-		self.tx=rx(15)
-		self.ty=ry(15)
-		self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
-		self.cl=[200,200,0]
-		self.etan=0
-		self.dan=time.time()
-		self.tpan=0.1
+    def __init__(self,x,y):
+        self.px=x
+        self.py=y
+        self.tx=rx(15)
+        self.ty=ry(15)
+        self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
+        self.cl=[200,200,0]
+        self.etan=0
+        self.dan=time.time()
+        self.tpan=0.1
     def update(self):
         if(time.time()-self.dan>=self.tpan):
             self.dan=time.time()
@@ -634,7 +634,7 @@ def ecran_quit():
     
 
 #fonction qui montre la carte du niveau
-def ecran_dep_lvl(mape,liste_succes):
+def ecran_dep_lvl(mape,liste_succes,liste_cles):
     fenetre.fill(mape.clm)
     ctx=int(tex/mape.mape.shape[0])
     cty=int(tey/mape.mape.shape[1])
@@ -732,10 +732,13 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
     perdu=False
     while encour_g:
         t1=time.time()
+        #cles
+        for cle in liste_cles:
+            cle.update()
         #cube
         cube2.update(cube)
         cube=verif_keys(cube,cube2)
-        etat=cube.update(mape,tc,cube2)
+        etat=cube.update(mape,tc,cube2,liste_cles)
         if cube.vie<=0:
             cube.vie=cube.vie_tot
             morts+=1
@@ -764,7 +767,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes):
                 cube2.dist_parc=0
                 ecran_chargement()
                 mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
-                liste_succes=ecran_dep_lvl(mape,liste_succes)
+                liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles)
                 cube2.reload(cube)
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
             else:
