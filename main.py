@@ -37,7 +37,7 @@ touches=[
  [K_n,"k_n","N"],
  [K_o,"k_o","O"],
  [K_p,"k_p","P"],
- [K_q,"k_q","P"],
+ [K_q,"k_q","Q"],
  [K_r,"k_r","R"],
  [K_s,"k_s","S"],
  [K_t,"k_t","T"],
@@ -52,11 +52,11 @@ touches=[
 
 def wait_key():
     #aff
-    pygame.draw.rect( fenetre , (0,0,0)       , (rx(100),ry(100),rx(600),ry(600)),0)
-    pygame.draw.rect( fenetre , (250,250,250) , (rx(100),ry(100),rx(600),ry(600)),rx(4))
+    pygame.draw.rect( fenetre , (0,0,0)       , (rx(100),ry(100),rx(600),ry(500)),0)
+    pygame.draw.rect( fenetre , (250,250,250) , (rx(100),ry(100),rx(600),ry(500)),rx(4))
     fenetre.blit( font3.render("Appuyez sur une touche",True,(255,255,255)) , (rx(200),ry(150)) )
-    btr=pygame.draw.rect( fenetre , (150,150,150) , ( rx(250), ry(400) , rx(200) , ry(80)) , 0)
-    fenetre.blit( font2.render("Annuler",True,(0,0,0)) , (rx(260),rx(410))) 
+    btr=pygame.draw.rect( fenetre , (150,150,150) , ( rx(250), ry(350) , rx(200) , ry(80)) , 0)
+    fenetre.blit( font2.render("Annuler",True,(0,0,0)) , (rx(260),rx(360))) 
     pygame.display.update()
     #
     result=None
@@ -70,13 +70,14 @@ def wait_key():
                 if event.key==K_ESCAPE:
                     return None
                 key=event.key
-            elif event.key==MOUSEBUTTONUP:
+                for k in touches:
+                    if key==k[0]:
+                        return touches.index(k)
+            elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btr.collidepoint(pos):
                     return None
-        for k in touches:
-            if key==k[0]:
-                return k[1]
+        
                 
 
 #emplacement du dossier des images
@@ -205,11 +206,11 @@ dire=home+"/"+dre
 dfs="save.nath"
 
 #controlles
-controls=[0,1,2,3,17,21,30,19]
+controls=[0,1,2,3,17,21,30,19,6,9]
 
 #0=up 1=down 2=left 3=right
 #4=aff mape 5=respawn 6=boost
-#7=pause
+#7=pause 8=aff chem cles 9=aff chem sortie
 couleurs_yeux=False
 
 
@@ -367,7 +368,7 @@ def aff_succes(liste_succes):
         n+=1
 
 #fonction save
-def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux):
+def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls):
     txt=str(skin_equipe)+cac
     for s in skins_possedes:
         txt+=str(s)+cacc
@@ -654,12 +655,12 @@ class Cles:
         
 
 #fonction qui verifie et gere les inputs          
-def verif_keys(cube,cube2):
+def verif_keys(cube,cube2,controls):
     keys=pygame.key.get_pressed()
-    if keys[K_UP]: cube.bouger("up",cube2)
-    if keys[K_DOWN]: cube.bouger("down",cube2)
-    if keys[K_LEFT]: cube.bouger("left",cube2)
-    if keys[K_RIGHT]: cube.bouger("right",cube2)
+    if keys[touches[controls[0]][0]]: cube.bouger("up",cube2)
+    if keys[touches[controls[1]][0]]: cube.bouger("down",cube2)
+    if keys[touches[controls[2]][0]]: cube.bouger("left",cube2)
+    if keys[touches[controls[3]][0]]: cube.bouger("right",cube2)
     if nb_joysticks > 0:
         #haut-bas
         aa=float(mon_joystick.get_axis(1))
@@ -783,7 +784,7 @@ def ecran_dep_lvl(mape,liste_succes,liste_cles,tc):
     return liste_succes
 
 #fonction affichage du jeu
-def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux):
+def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux,pause,dtdp):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
@@ -830,12 +831,17 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
             pygame.draw.rect( fenetre , to_cl(cle.cl2) , (cam[0]+cle.px,cam[1]+cle.py,cle.tx,cle.ty) , rx(2))
         if aff_chem_cles: pygame.draw.line( fenetre , (0,230,255) , (cam[0]+cube.px+cube.tx/2,cam[1]+cube.py+cube.ty/2), (cam[0]+cle.px+cle.tx/2,cam[1]+cle.py+cle.ty/2) , 1)
     #ui
-    pygame.draw.rect(fenetre,(255-int((tpstot-(time.time()-tps1))/tpstot*255),int((tpstot-(time.time()-tps1))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps1))/tpstot*tex),ry(10)),0)
+    tps=tps1
+    if pause:
+        tps+=time.time()-dtdp
+    pygame.draw.rect(fenetre,(255-int((tpstot-(time.time()-tps))/tpstot*255),int((tpstot-(time.time()-tps))/tpstot*255),0),(rx(0),ry(0),int((tpstot-(time.time()-tps))/tpstot*tex),ry(10)),0)
     pygame.draw.rect(fenetre,(250,0,0),(rx(100),ry(15),int(cube.vie/cube.vie_tot*rx(200)),ry(15)),0)
     pygame.draw.rect(fenetre,(0,0,0),(rx(100),ry(15),rx(200),ry(15)),1)
     fenetre.blit( font1.render("fps : "+str(fps),20,(255,255,255)), [rx(15),ry(15)] )
     fenetre.blit( font1.render("lvl : "+str(niv),20,(255,255,255)), [tex-rx(100),ry(25)] )
     fenetre.blit( font1.render("vous êtes mort : "+str(morts)+" fois",20,(255,255,255)), [tex-rx(200),ry(10)] )
+    if pause:
+        fenetre.blit( font3.render("Pause.",True,(255,255,255)) , [rx(300),ry(50)])
     #   -cles
     if len(liste_cles)>0:
         pygame.draw.rect( fenetre , liste_cles[0].cl , (tex-rx(200),ry(70),rx(180),ry(40) ) , 0)
@@ -882,7 +888,7 @@ def cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux):
     return mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles
 
 #fonction main jeu
-def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux):
+def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux,controls):
     mbp=False
     succes.nbparties+=1
     tcb=rx(100)
@@ -895,6 +901,9 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
     encour_g=True
     morts=0
     fps=0
+    pause=False
+    dtdp=time.time()
+    dtfp=time.time()
     succes.test_succes(cube,niv,skins_possedes,liste_succes)
     perdu=False
     aff_chem_cles=False
@@ -902,75 +911,76 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
     taff_chem_cles=3
     while encour_g:
         t1=time.time()
-        #cles
-        for cle in liste_cles:
-            cle.update()
-        if aff_chem_cles and time.time()-daff_chem_cles>taff_chem_cles:
-            daff_chem_cles=time.time()
-            aff_chem_cles=False
-        #cube
-        cube2.update(cube)
-        cube=verif_keys(cube,cube2)
-        etat=cube.update(mape,tc,cube2,liste_cles)
-        if cube.vie<=0:
-            cube.vie=cube.vie_tot
-            morts+=1
-            if cube.dist_parc>=200:
-                succes.mort_avec_dist_min+=1
-                #print("Mort")
-            succes.distance_parcourue+=cube.dist_parc
-            cube.dist_parc=0
-            cube.px=cube.checkpoint[0]
-            cube.py=cube.checkpoint[1]
-            cube.vitx,cube.vity=0,0
-            cube.isgrap=False
-            time.sleep(0.1)
-            cube2.reload(cube)
-            succes.test_succes(cube,niv,skins_possedes,liste_succes)
-        elif etat==True and len(liste_cles)==0:
-            if niv==9:
-                ecran_grappin()
-            if niv<100:
-                niv+=1
-                succes.distance_parcourue+=cube2.dist_parc
-                cube2.dist_parc=0
-                ecran_chargement()
-                mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux)
-                ecran_niv(liste_cles,niv)
-                liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
+        if not pause:
+            #cles
+            for cle in liste_cles:
+                cle.update()
+            if aff_chem_cles and time.time()-daff_chem_cles>taff_chem_cles:
+                daff_chem_cles=time.time()
+                aff_chem_cles=False
+            #cube
+            cube2.update(cube)
+            cube=verif_keys(cube,cube2,controls)
+            etat=cube.update(mape,tc,cube2,liste_cles)
+            if cube.vie<=0:
+                cube.vie=cube.vie_tot
+                morts+=1
+                if cube.dist_parc>=200:
+                    succes.mort_avec_dist_min+=1
+                    #print("Mort")
+                succes.distance_parcourue+=cube.dist_parc
+                cube.dist_parc=0
+                cube.px=cube.checkpoint[0]
+                cube.py=cube.checkpoint[1]
+                cube.vitx,cube.vity=0,0
+                cube.isgrap=False
+                time.sleep(0.1)
                 cube2.reload(cube)
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
-            else:
-                encour_g=False
+            elif etat==True and len(liste_cles)==0:
+                if niv==9:
+                    ecran_grappin()
+                if niv<100:
+                    niv+=1
+                    succes.distance_parcourue+=cube2.dist_parc
+                    cube2.dist_parc=0
+                    ecran_chargement()
+                    mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux)
+                    ecran_niv(liste_cles,niv)
+                    liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
+                    cube2.reload(cube)
+                    succes.test_succes(cube,niv,skins_possedes,liste_succes)
+                else:
+                    encour_g=False
+                    succes.distance_parcourue+=cube2.dist_parc
+                    cube2.dist_parc=0
+                    succes.test_succes(cube,niv,skins_possedes,liste_succes)
+                    ecran_fin()
+            if time.time()-tps1>=tpstot:
+                encour=False
+                perdu=True
                 succes.distance_parcourue+=cube2.dist_parc
                 cube2.dist_parc=0
+                if niv>=3 and not mbp: succes.nbpartiesbons,mbp=succes.nbpartiesbons+1,True
                 succes.test_succes(cube,niv,skins_possedes,liste_succes)
-                ecran_fin()
-        if time.time()-tps1>=tpstot:
-            encour=False
-            perdu=True
-            succes.distance_parcourue+=cube2.dist_parc
-            cube2.dist_parc=0
-            if niv>=3 and not mbp: succes.nbpartiesbons,mbp=succes.nbpartiesbons+1,True
-            succes.test_succes(cube,niv,skins_possedes,liste_succes)
-            ecran_mort()
-            break
-        #gestion succes aff
-        for s in liste_succes:
-            if time.time()-s[3]>=s[2]:
-                del(liste_succes[liste_succes.index(s)])
-        cam=[-cube.px+tex/2,-cube.py+tey/2]
-        #mape
-        mape.update()
+                ecran_mort()
+                break
+            #gestion succes aff
+            for s in liste_succes:
+                if time.time()-s[3]>=s[2]:
+                    del(liste_succes[liste_succes.index(s)])
+            cam=[-cube.px+tex/2,-cube.py+tey/2]
+            #mape
+            mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux)
+        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux,pause,dtdp)
         #event
         for event in pygame.event.get():
             if event.type==QUIT:
                 if niv>=3 and not mbp:
                     succes.nbpartiesbons+=1
                     mpb=True
-                save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+                save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
                 exit()
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE:
@@ -979,13 +989,13 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
                         succes.nbpartiesbons+=1
                         mpb=True
                     ecran_quit()
-                elif event.key==K_n:
+                elif event.key==touches[controls[4]][0]:
                     tpstot/=1.5
                     liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
-                elif event.key==K_c:
+                elif event.key==touches[controls[8]][0]:
                     daff_chem_cles=time.time()
                     aff_chem_cles=True
-                elif event.key==K_r:
+                elif event.key==touches[controls[5]][0]:
                     succes.distance_parcourue+=cube.dist_parc
                     cube.dist_parc=0
                     cube.px=cube.checkpoint[0]
@@ -995,6 +1005,14 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
                     time.sleep(0.1)
                     cube2.reload(cube)
                     succes.test_succes(cube,niv,skins_possedes,liste_succes)
+                elif event.key==touches[controls[7]][0]:
+                    if pause:
+                        pause=False
+                        dtfp=time.time()
+                        tps1+=dtfp-dtdp
+                    else:
+                        pause=True
+                        dtdp=time.time()
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if cube.cangrap and time.time()-cube.dgrap>=cube.tgrap:
@@ -1049,8 +1067,8 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
     return skin_equipe,skins_possedes,liste_succes
 
 #fonction affichage du menu
-def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux):
-    btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7,btn8=None,None,None,None,None,None,None,None,None,None
+def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux,controls):
+    btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7,btn8,btn9=None,None,None,None,None,None,None,None,None,None,None
     bts=[]
     for x in range(len(skins)+5): bts.append( None )
     bst=[]
@@ -1072,6 +1090,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("Succes",20,(25,25,25)) , [rx(60),ry(445)] )
         btn8=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(335),rx(200),ry(50)),0)
         fenetre.blit( font3.render("Aide",20,(25,25,25)) , [rx(60),ry(345)] )
+        btn9=pygame.draw.rect(fenetre,(200,200,200),(rx(50),ry(255),rx(330),ry(50)),0)
+        fenetre.blit( font3.render("Changer les controles",20,(25,25,25)) , [rx(60),ry(265)] )
     elif men==4: #explications
         fenetre.blit( font5.render("Cube2 : Comment Jouer",20,(255,255,255)) , [rx(200),ry(10)] )
         fenetre.blit( font2.render("Le but de ce jeu est de trouver la sortie de chaque niveau",20,(255,255,255)) , [rx(100),ry(100)] )
@@ -1201,21 +1221,81 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         pygame.draw.rect( fenetre , (0,0,0) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , rx(2))
         fenetre.blit( font1.render("v",True,(20,20,20)) , (tex-rx(45),tey-ry(40)) )
     if men==5: #changer les controlles
+        btn9=pygame.draw.rect(fenetre,(200,200,200),(rx(15),ry(15),rx(100),ry(50)),0)
+        fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(25),ry(25)] )
+        #0=up 1=down 2=left 3=right 4=aff mape 5=respawn 6=boost 7=pause 8=aff chem cles 9=aff chem sortie
         fenetre.blit( font3.render("Controlles : ",True,(255,255,255)), [rx(150),ry(30)])
         #tcup
         xx,yy=rx(50),ry(100)
         fenetre.blit( font2.render( "Haut" , True , (230,230,230)) , [xx,yy])
-        btc[0]=pygale.draw.rect( fenetre , (200,200,200) , (xx+rx(150),yy-ry(5),rx(150),ry(60)) , 0)
-        #fenetre.blit( 
+        btc[0]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[0]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcdown
+        xx,yy=rx(50),ry(160)
+        fenetre.blit( font2.render( "Bas" , True , (230,230,230)) , [xx,yy])
+        btc[1]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[1]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcleft
+        xx,yy=rx(50),ry(220)
+        fenetre.blit( font2.render( "Gauche" , True , (230,230,230)) , [xx,yy])
+        btc[2]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[2]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcright
+        xx,yy=rx(50),ry(280)
+        fenetre.blit( font2.render( "Droite" , True , (230,230,230)) , [xx,yy])
+        btc[3]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[3]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcaff mape
+        xx,yy=rx(50),ry(340)
+        fenetre.blit( font2.render( "Affichage de la mape" , True , (230,230,230)) , [xx,yy])
+        btc[4]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[4]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcaff mape
+        xx,yy=rx(50),ry(400)
+        fenetre.blit( font2.render( "Respawn" , True , (230,230,230)) , [xx,yy])
+        btc[5]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[5]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcboost
+        xx,yy=rx(50),ry(460)
+        fenetre.blit( font2.render( "Dash(comming soon)" , True , (230,230,230)) , [xx,yy])
+        btc[6]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[6]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcpause
+        xx,yy=rx(50),ry(520)
+        fenetre.blit( font2.render( "Pause" , True , (230,230,230)) , [xx,yy])
+        btc[7]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        fenetre.blit( font1.render( touches[controls[7]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        #tcaffchemcles
+        xx,yy=rx(400),ry(100)
+        fenetre.blit( font2.render( "Aff chemin clés" , True , (230,230,230)) , [xx,yy])
+        btc[8]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[8]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        #tcaffchemcles
+        xx,yy=rx(400),ry(160)
+        fenetre.blit( font2.render( "Aff chemin sortie" , True , (230,230,230)) , [xx,yy-ry(5)])
+        fenetre.blit( font2.render( "(juste en mode facile)" , True , (230,230,230)) , [xx,yy+ry(15)])
+        btc[9]=pygame.draw.rect( fenetre , (200,200,200) , (xx+rx(200),yy-ry(5),rx(120),ry(45)) , 0)
+        fenetre.blit( font1.render( touches[controls[9]][2] , True , (0,0,0)) , [xx+rx(205),yy+ry(1)])
+        pygame.draw.rect( fenetre , (255,255,255) , (xx-ry(5),yy-ry(5),rx(325),ry(45)) , rx(2))
+        
     aff_succes(liste_succes)
     pygame.display.update()
-    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8
+    return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8,btn9,btc
     
 
 #fonction du menu
-def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux):
+def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls):
     skins_possedes=list(set(skins_possedes))
-    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
     cube=None
     niv=0
     pscs=1
@@ -1238,8 +1318,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
             needtoaff=True
         if needtoaff:
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
-            save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
-            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux)
+            save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
+            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8,btn9,btc=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux,controls)
             needtoaff=False
         for s in liste_succes:
             if time.time()-s[3]>=s[2]:
@@ -1281,12 +1361,12 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
-                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux)
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
+                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux,controls)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
@@ -1320,6 +1400,10 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                     if men==0: men=4
                     else: men=0
                     an=0
+                elif btn9!=None and btn9.collidepoint(pos):
+                    if men==0: men=5
+                    else: men=0
+                    an=0
                 for b in bts:
                     if b!=None and b.collidepoint(pos):
                         skin_equipe=skins_possedes.index(skins_possedes[bts.index(b)])
@@ -1343,14 +1427,21 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                             tex,tey=int(mtex/d),int(mtey/d)
                         if di==5:
                             couleurs_yeux=not couleurs_yeux
-                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
+                for b in btc:
+                    if b!=None and b.collidepoint(pos):
+                        di=btc.index(b)
+                        tc=wait_key()
+                        if tc!=None:
+                            controls[di]=tc
+                    
                 needtoaff=True
 
 #ON LANCE LE JEU ICI :
 
 #try:
 if True:
-    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls)
 #except Exception as e:
 else:
     pygame.quit()
