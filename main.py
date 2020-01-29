@@ -51,33 +51,33 @@ touches=[
 ]
 
 def wait_key():
-	#aff
-	pygame.draw.rect( fenetre , (0,0,0)       , (rx(100),ry(100),rx(600),ry(600)),0)
-	pygame.draw.rect( fenetre , (250,250,250) , (rx(100),ry(100),rx(600),ry(600)),rx(4))
-	fenetre.blit( font3.render("Appuyez sur une touche",True,(255,255,255)) , (rx(200),ry(150)) )
-	btr=pygame.draw.rect( fenetre , (150,150,150) , ( rx(250), ry(400) , rx(200) , ry(80)) , 0)
-	fenetre.blit( font2.render("Annuler",True,(0,0,0)) , (rx(260),rx(410))) 
-	pygame.display.update()
+    #aff
+    pygame.draw.rect( fenetre , (0,0,0)       , (rx(100),ry(100),rx(600),ry(600)),0)
+    pygame.draw.rect( fenetre , (250,250,250) , (rx(100),ry(100),rx(600),ry(600)),rx(4))
+    fenetre.blit( font3.render("Appuyez sur une touche",True,(255,255,255)) , (rx(200),ry(150)) )
+    btr=pygame.draw.rect( fenetre , (150,150,150) , ( rx(250), ry(400) , rx(200) , ry(80)) , 0)
+    fenetre.blit( font2.render("Annuler",True,(0,0,0)) , (rx(260),rx(410))) 
+    pygame.display.update()
     #
-	result=None
-	enxour=True
-	while enxour:
-		key=None
-		for event in pygame.event.get():
-			if event.type==QUIT:
-				exit()
-		    elif event.type==KEYDOWN:
-			    if event.key==K_ESCAPE:
-				    return None
-			    key=event.key
-			elif event.key==MOUSEBUTTONUP:
-				pos=pygame.mouse.get_pos()
-				if btr.collidepoint(pos):
-					return None
-		for k in touches:
-			if key==k[0]:
-				return k[1]
-				
+    result=None
+    enxour=True
+    while enxour:
+        key=None
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                exit()
+            elif event.type==KEYDOWN:
+                if event.key==K_ESCAPE:
+                    return None
+                key=event.key
+            elif event.key==MOUSEBUTTONUP:
+                pos=pygame.mouse.get_pos()
+                if btr.collidepoint(pos):
+                    return None
+        for k in touches:
+            if key==k[0]:
+                return k[1]
+                
 
 #emplacement du dossier des images
 dimg="images/"
@@ -206,11 +206,11 @@ dfs="save.nath"
 
 #controlles
 controls=[0,1,2,3,17,21,30,19]
-]
+
 #0=up 1=down 2=left 3=right
 #4=aff mape 5=respawn 6=boost
 #7=pause
-
+couleurs_yeux=False
 
 
 affaide=False
@@ -288,7 +288,7 @@ if len(f)>14:
         if t != None:
             if x<len(controls): controls[x]=t
             else: controls.append(t)
-	
+    
 
 #fonction relatives a la résolution de l'ecran du joueur
 def rx(x): return int(x/btex*tex)
@@ -330,8 +330,8 @@ pygame.mouse.set_cursor(*cursor_sizer1)
 mon_joystick="joystick"
 nb_joysticks = pygame.joystick.get_count()
 if nb_joysticks > 0:
-	mon_joystick = pygame.joystick.Joystick(0)
-	mon_joystick.init()
+    mon_joystick = pygame.joystick.Joystick(0)
+    mon_joystick.init()
 
 #fonction couleur aléattoire
 def rcl(): return (random.randint(50,200),random.randint(50,100),random.randint(50,200))
@@ -396,7 +396,7 @@ def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
     if couleurs_yeux:  cy="1"
     txt+=cy+cac
     for c in controls:
-        txt+=c+cacc
+        txt+=touches[c][1]+cacc
     txt=txt[:-1]
     f=open(dire+dfs,"w")
     f.write(txt)
@@ -651,7 +651,7 @@ class Cles:
             if(self.etan>=20):
                 self.etan=0
             
-		
+        
 
 #fonction qui verifie et gere les inputs          
 def verif_keys(cube,cube2):
@@ -963,7 +963,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
         #mape
         mape.update()
         #aff
-        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles)
+        aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux)
         #event
         for event in pygame.event.get():
             if event.type==QUIT:
@@ -1204,9 +1204,9 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         fenetre.blit( font3.render("Controlles : ",True,(255,255,255)), [rx(150),ry(30)])
         #tcup
         xx,yy=rx(50),ry(100)
-        fenetre.blit( "Haut" , True , (230,230,230)) , [xx,yy])
+        fenetre.blit( font2.render( "Haut" , True , (230,230,230)) , [xx,yy])
         btc[0]=pygale.draw.rect( fenetre , (200,200,200) , (xx+rx(150),yy-ry(5),rx(150),ry(60)) , 0)
-        fenetre.blit( 
+        #fenetre.blit( 
     aff_succes(liste_succes)
     pygame.display.update()
     return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8
