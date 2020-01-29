@@ -14,6 +14,71 @@ fullscreen=False
 acchardware=False
 doublebuf=False
 
+#touches
+
+touches=[
+ [K_UP,"k_up","fleche du haut"],
+ [K_DOWN,"k_down","fleche du bas"],
+ [K_LEFT,"k_left","fleche de gauche"],
+ [K_RIGHT,"k_right","fleche de droite"],
+ [K_a,"k_a","A"],
+ [K_b,"k_b","B"],
+ [K_c,"k_c","C"],
+ [K_d,"k_d","D"],
+ [K_e,"k_e","E"],
+ [K_f,"k_f","F"],
+ [K_g,"k_g","G"],
+ [K_h,"k_h","H"],
+ [K_i,"k_i","I"],
+ [K_j,"k_j","J"],
+ [K_k,"k_k","K"],
+ [K_l,"k_l","L"],
+ [K_m,"k_m","M"],
+ [K_n,"k_n","N"],
+ [K_o,"k_o","O"],
+ [K_p,"k_p","P"],
+ [K_q,"k_q","P"],
+ [K_r,"k_r","R"],
+ [K_s,"k_s","S"],
+ [K_t,"k_t","T"],
+ [K_u,"k_u","U"],
+ [K_v,"k_v","V"],
+ [K_w,"k_w","W"],
+ [K_x,"k_x","X"],
+ [K_y,"k_y","Y"],
+ [K_z,"k_z","Z"],
+ [K_SPACE,"k_space","ESPACE"]
+]
+
+def wait_key():
+	#aff
+	pygame.draw.rect( fenetre , (0,0,0)       , (rx(100),ry(100),rx(600),ry(600)),0)
+	pygame.draw.rect( fenetre , (250,250,250) , (rx(100),ry(100),rx(600),ry(600)),rx(4))
+	fenetre.blit( font3.render("Appuyez sur une touche",True,(255,255,255)) , (rx(200),ry(150)) )
+	btr=pygame.draw.rect( fenetre , (150,150,150) , ( rx(250), ry(400) , rx(200) , ry(80)) , 0)
+	fenetre.blit( font2.render("Annuler",True,(0,0,0)) , (rx(260),rx(410))) 
+	pygame.display.update()
+    #
+	result=None
+	enxour=True
+	while enxour:
+		key=None
+		for event in pygame.event.get():
+			if event.type==QUIT:
+				exit()
+		    elif event.type==KEYDOWN:
+			    if event.key==K_ESCAPE:
+				    return None
+			    key=event.key
+			elif event.key==MOUSEBUTTONUP:
+				pos=pygame.mouse.get_pos()
+				if btr.collidepoint(pos):
+					return None
+		for k in touches:
+			if key==k[0]:
+				return k[1]
+				
+
 #emplacement du dossier des images
 dimg="images/"
 
@@ -139,6 +204,14 @@ dire=home+"/"+dre
 #variable du nom de la sauvegarde
 dfs="save.nath"
 
+#controlles
+controls=[0,1,2,3,17,21,30,19]
+]
+#0=up 1=down 2=left 3=right
+#4=aff mape 5=respawn 6=boost
+#7=pause
+
+
 
 affaide=False
 #si il n'y a pas de sauvegarde présente, on la crée
@@ -157,7 +230,11 @@ if not dfs in os.listdir(dire):
     txt+=str(0)+cac #nbpartiesbon
     txt+=str(0)+cac #niv max atteint
     txt+=str(0)+cac #dist parcourue
-    txt+=str(0) #morts avec dist min
+    txt+=str(0)+cac #morts avec dist min
+    txt+=str(0)+cac #couleurs pour yeux
+    for c in controls:
+        txt+=tt[c][1]+cacc
+    txt=txt[:-1]
     
     f=open(dire+dfs,"w")
     f.write(txt)
@@ -171,6 +248,8 @@ skin_equipe=0
 successes=[]
 #nombre de succès affiché en 1 page de succès
 nbspp=6
+
+
 
 #on load le jeu :
 f=open(dire+dfs,"r").read().split(cac)
@@ -197,6 +276,19 @@ if len(f)>9: succes.nbpartiesbons=int(f[9])
 if len(f)>10: succes.niveau_max=int(f[10])
 if len(f)>11: succes.distance_parcourue=float(f[11])
 if len(f)>12: succes.mort_avec_dist_min=int(f[12])
+if len(f)>13: couleurs_yeux=bool(int(f[13]))
+if len(f)>14:
+    cts=f[14].split(cacc)
+    for x in range(len(cts)):
+        t=None
+        ct=cts[x]
+        for tt in touches:
+            if tt[1]==ct:
+                t=touches.index(tt)
+        if t != None:
+            if x<len(controls): controls[x]=t
+            else: controls.append(t)
+	
 
 #fonction relatives a la résolution de l'ecran du joueur
 def rx(x): return int(x/btex*tex)
@@ -275,7 +367,7 @@ def aff_succes(liste_succes):
         n+=1
 
 #fonction save
-def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
+def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux):
     txt=str(skin_equipe)+cac
     for s in skins_possedes:
         txt+=str(s)+cacc
@@ -299,8 +391,13 @@ def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
     txt+=str(succes.nbpartiesbons)+cac
     txt+=str(succes.niveau_max)+cac
     txt+=str(succes.distance_parcourue)+cac
-    txt+=str(succes.mort_avec_dist_min)
-    
+    txt+=str(succes.mort_avec_dist_min)+cac
+    cy="0"
+    if couleurs_yeux:  cy="1"
+    txt+=cy+cac
+    for c in controls:
+        txt+=c+cacc
+    txt=txt[:-1]
     f=open(dire+dfs,"w")
     f.write(txt)
     f.close()
@@ -686,7 +783,7 @@ def ecran_dep_lvl(mape,liste_succes,liste_cles,tc):
     return liste_succes
 
 #fonction affichage du jeu
-def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles):
+def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles,aff_chem_cles,couleurs_yeux):
     fenetre.fill(mape.clm)
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
@@ -748,7 +845,7 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
     pygame.display.update()
 
 #fonction qui crée un niveau
-def cniv(tcb,niv,skin_equipe,skins_possedes):
+def cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux):
     tc=int(tcb/3+float((150-niv)/150.*(tcb/2*1.3)))
     mape=Mape(niv)
     cube=Cube(tcb,tc,mape,niv,skin_equipe,skins_possedes)
@@ -785,13 +882,13 @@ def cniv(tcb,niv,skin_equipe,skins_possedes):
     return mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles
 
 #fonction main jeu
-def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf):
+def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux):
     mbp=False
     succes.nbparties+=1
     tcb=rx(100)
     niv=1
     ecran_chargement()
-    mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
+    mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux)
     ecran_niv(liste_cles,niv)
     liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
     cube2.reload(cube)
@@ -838,7 +935,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
                 succes.distance_parcourue+=cube2.dist_parc
                 cube2.dist_parc=0
                 ecran_chargement()
-                mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes)
+                mape,cube,cam,cube2,tps1,tpstot,tc,liste_cles=cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux)
                 ecran_niv(liste_cles,niv)
                 liste_succes=ecran_dep_lvl(mape,liste_succes,liste_cles,tc)
                 cube2.reload(cube)
@@ -873,7 +970,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
                 if niv>=3 and not mbp:
                     succes.nbpartiesbons+=1
                     mpb=True
-                save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+                save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
                 exit()
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE:
@@ -952,12 +1049,14 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
     return skin_equipe,skins_possedes,liste_succes
 
 #fonction affichage du menu
-def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs):
+def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux):
     btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7,btn8=None,None,None,None,None,None,None,None,None,None
     bts=[]
     for x in range(len(skins)+5): bts.append( None )
     bst=[]
     for x in range(10): bst.append( None )
+    btc=[]
+    for x in range(10): btc.append( None )
     fenetre.fill((0,0,0))
     if men==0: #main
         fenetre.blit( font5.render("Cube2",20,(255,255,255)) , [rx(300),ry(10)] )
@@ -1049,6 +1148,9 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         if doublebuf: cl=(0,150,0)
         bst[2]=pygame.draw.rect( fenetre, cl , (rx(50),ry(410),rx(50),rx(50)) , 0)
         fenetre.blit( font3.render("double buff",True,(255,255,255)), [rx(120),ry(420)])
+        if couleurs_yeux: cl=(0,150,0)
+        bst[5]=pygame.draw.rect( fenetre, cl , (rx(50),ry(530),rx(50),rx(50)) , 0)
+        fenetre.blit( font3.render("Couleurs plus douces pour led yeux",True,(255,255,255)), [rx(120),ry(540)]) 
         fenetre.blit( font3.render("résolution de la fenetre :",True,(255,255,255)), [rx(170),ry(40)])
         bst[3]=pygame.draw.rect( fenetre, (50,50,50), (rx(100),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render("<",True,(255,255,255)), [rx(110),ry(110)])
@@ -1098,14 +1200,22 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bts2=pygame.draw.rect( fenetre , (250,250,250) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , 0)
         pygame.draw.rect( fenetre , (0,0,0) , (tex-rx(50),tey-ry(50),rx(30),ry(30)) , rx(2))
         fenetre.blit( font1.render("v",True,(20,20,20)) , (tex-rx(45),tey-ry(40)) )
+    if men==5: #changer les controlles
+        fenetre.blit( font3.render("Controlles : ",True,(255,255,255)), [rx(150),ry(30)])
+        #tcup
+        xx,yy=rx(50),ry(100)
+        fenetre.blit( "Haut" , True , (230,230,230)) , [xx,yy])
+        btc[0]=pygale.draw.rect( fenetre , (200,200,200) , (xx+rx(150),yy-ry(5),rx(150),ry(60)) , 0)
+        fenetre.blit( 
     aff_succes(liste_succes)
     pygame.display.update()
     return btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8
+    
 
 #fonction du menu
-def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes):
+def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux):
     skins_possedes=list(set(skins_possedes))
-    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
     cube=None
     niv=0
     pscs=1
@@ -1128,8 +1238,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
             needtoaff=True
         if needtoaff:
             succes.test_succes(cube,niv,skins_possedes,liste_succes)
-            save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
-            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs)
+            save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+            btn,btn2,btn3,btn4,btn5,btn6,bts,bst,bts1,bts2,btn7,btn8=aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux)
             needtoaff=False
         for s in liste_succes:
             if time.time()-s[3]>=s[2]:
@@ -1150,12 +1260,15 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                     etdbas=0
                 elif event.key==K_c and etdbas==0:
                     etdbas=1
-                elif event.key==K_u and etdbas==1:
-                    etdbas=2
-                elif event.key==K_b and etdbas==2:
-                    etdbas=3
-                elif event.key==K_e and etdbas==3:
-                    etdbas=4
+                elif event.key==K_u:
+                    if etdbas==1:  etdbas=2
+                    etdbas=0
+                elif event.key==K_b:
+                    if etdbas==2: etdbas=3
+                    etdbas=0
+                elif event.key==K_e:
+                    if etdbas==3: etdbas=4
+                    etdbas=0
                 elif event.key==K_RETURN and etdbas==4:
                     for x in range(len(skins)):
                         if not x in skins_possedes: skins_possedes.append(x)
@@ -1163,15 +1276,17 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                     etdbas=0
                     needtoaff=True
                     print("Cheat code : You get all the skins")
+                else:
+                    etdbas=0
             elif event.type==MOUSEBUTTONUP:
                 pos=pygame.mouse.get_pos()
                 if btn!=None and btn.collidepoint(pos):
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
-                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf)
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
+                    skin_equipe,skins_possedes,liste_succes=main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardware,doublebuf,couleurs_yeux)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
                     an=0
                     if skin_equipe>=len(skins_possedes): skin_equipe=0
-                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+                    save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
                 elif btn2!=None and btn2.collidepoint(pos): exit()
                 elif btn3!=None and btn3.collidepoint(pos):
                     if men==0: men=1
@@ -1226,14 +1341,16 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                             d=float(mtex/tex)-0.5
                             if d < 1: d=1
                             tex,tey=int(mtex/d),int(mtey/d)
-                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+                        if di==5:
+                            couleurs_yeux=not couleurs_yeux
+                        save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
                 needtoaff=True
 
 #ON LANCE LE JEU ICI :
 
 #try:
 if True:
-    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes)
+    menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux)
 #except Exception as e:
 else:
     pygame.quit()
