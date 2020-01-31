@@ -1100,7 +1100,7 @@ def main_jeu(skin_equipe,skins_possedes,liste_succes,succes,fullscreen,acchardwa
     return skin_equipe,skins_possedes,liste_succes
 
 #fonction affichage du menu
-def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux,controls):
+def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware,doublebuf,liste_succes,succes,pscs,couleurs_yeux,controls,diff):
     btn,btn2,btn3,btn4,btn5,btn6,bts1,bts2,btn7,btn8,btn9=None,None,None,None,None,None,None,None,None,None,None
     bts=[]
     for x in range(len(skins)+5): bts.append( None )
@@ -1205,8 +1205,8 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bst[2]=pygame.draw.rect( fenetre, cl , (rx(50),ry(410),rx(50),rx(50)) , 0)
         fenetre.blit( font3.render("double buff",True,(255,255,255)), [rx(120),ry(420)])
         if couleurs_yeux: cl=(0,150,0)
-        bst[5]=pygame.draw.rect( fenetre, cl , (rx(50),ry(530),rx(50),rx(50)) , 0)
-        fenetre.blit( font3.render("Couleurs plus douces pour led yeux",True,(255,255,255)), [rx(120),ry(540)]) 
+        bst[5]=pygame.draw.rect( fenetre, cl , (rx(50),ry(475),rx(50),rx(50)) , 0)
+        fenetre.blit( font3.render("Couleurs plus douces pour les yeux",True,(255,255,255)), [rx(120),ry(480)]) 
         fenetre.blit( font3.render("résolution de la fenetre :",True,(255,255,255)), [rx(170),ry(40)])
         bst[3]=pygame.draw.rect( fenetre, (50,50,50), (rx(100),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render("<",True,(255,255,255)), [rx(110),ry(110)])
@@ -1215,40 +1215,40 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         bst[4]=pygame.draw.rect( fenetre, (50,50,50), (rx(510),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render(">",True,(255,255,255)), [rx(520),ry(110)])
         #
-        fenetre.blit( font2.render("Difficulté",True,(255,255,255)) , [rx(25),ry(350)])
+        fenetre.blit( font2.render("Difficulté",True,(255,255,255)) , [rx(650),ry(170)])
         ttx,tty=rx(120),ry(45)
         #0
-        xx,yy,n=rx(50),ry(400),0
+        xx,yy,n=rx(650),ry(200),0
         cl=(150,90,90)
         if diff==n: cl=(90,200,90)
         btd[n]=pygame.draw.rect( fenetre , cl , (xx,yy,ttx,tty) , 0)
-        fenetre.blit( font1.render(difficultes[n],True,(0,0,0) , [xx+rx(5),yy+ry(5)])
+        fenetre.blit( font1.render(difficultes[n],True,(0,0,0)) , [xx+rx(5),yy+ry(5)])
         #1
-        xx,yy,n=rx(170),ry(400),1
+        xx,yy,n=rx(650),ry(250),1
         cl=(150,90,90)
         if diff==n: cl=(90,200,90)
         btd[n]=pygame.draw.rect( fenetre , cl , (xx,yy,ttx,tty) , 0)
-        fenetre.blit( font1.render(difficultes[n],True,(0,0,0) , [xx+rx(5),yy+ry(5)])
+        fenetre.blit( font1.render(difficultes[n],True,(0,0,0)) , [xx+rx(5),yy+ry(5)])
         #2
-        xx,yy,n=rx(290),ry(400),2
+        xx,yy,n=rx(650),ry(300),2
         cl=(150,90,90)
         if diff==n: cl=(90,200,90)
         btd[n]=pygame.draw.rect( fenetre , cl , (xx,yy,ttx,tty) , 0)
-        fenetre.blit( font1.render(difficultes[n],True,(0,0,0) , [xx+rx(5),yy+ry(5)])
+        fenetre.blit( font1.render(difficultes[n],True,(0,0,0)) , [xx+rx(5),yy+ry(5)])
         #3
-        xx,yy,n=rx(410),ry(400),3
+        xx,yy,n=rx(650),ry(350),3
         cl=(150,90,90)
         if diff==n: cl=(90,200,90)
         btd[n]=pygame.draw.rect( fenetre , cl , (xx,yy,ttx,tty) , 0)
-        fenetre.blit( font1.render(difficultes[n],True,(0,0,0) , [xx+rx(5),yy+ry(5)])
+        fenetre.blit( font1.render(difficultes[n],True,(0,0,0)) , [xx+rx(5),yy+ry(5)])
         #4
-        xx,yy,n=rx(530),ry(400),4
+        xx,yy,n=rx(650),ry(400),4
         cl=(150,90,90)
         if diff==n: cl=(90,200,90)
         btd[n]=pygame.draw.rect( fenetre , cl , (xx,yy,ttx,tty) , 0)
-        fenetre.blit( font1.render(difficultes[n],True,(0,0,0) , [xx+rx(5),yy+ry(5)])
+        fenetre.blit( font1.render(difficultes[n],True,(0,0,0)) , [xx+rx(5),yy+ry(5)])
         #
-        fenetre.blit( font2.render("Pour que les parametres s'appliquent, veuillez relancer le jeu",True,(150,0,0)), [rx(10),ry(500)])
+        fenetre.blit( font3.render("Pour que les parametres s'appliquent, veuillez relancer le jeu",True,(200,0,0)), [rx(10),ry(560)])
     elif men==3: #succes
         btn3=pygame.draw.rect(fenetre,(200,200,200),(rx(20),ry(20),rx(100),ry(50)),0)
         fenetre.blit( font3.render("retour",20,(25,25,25)) , [rx(30),ry(30)] )
@@ -1507,7 +1507,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                             controls[di]=tc
                 for b in btd:
                     if b!=None and b.collidepoint(pos):
-                        di=btc.index(b)
+                        di=btd.index(b)
                         diff=di
                 needtoaff=True
                 save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls,diff)
