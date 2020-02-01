@@ -1522,7 +1522,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                 for b in btd:
                     if b!=None and b.collidepoint(pos):
                         di=btd.index(b)
-                        diff=di
+                        if di!=0:
+                            diff=di
                 needtoaff=True
                 save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls,diff)
 
