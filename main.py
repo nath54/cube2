@@ -240,7 +240,7 @@ if not dfs in os.listdir(dire):
     txt+=str(0)+cac #morts avec dist min
     txt+=str(0)+cac #couleurs pour yeux
     for c in controls:
-        txt+=tt[c][1]+cacc
+        txt+=touches[c][1]+cacc
     txt=txt[:-1]+cac
     txt+=str(diff)
     
@@ -407,7 +407,8 @@ def save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
     txt+=cy+cac
     for c in controls:
         txt+=touches[c][1]+cacc
-    txt=txt[:-1]
+    txt=txt[:-1]+cac
+    txt+=str(diff)
     f=open(dire+dfs,"w")
     f.write(txt)
     f.close()
@@ -506,8 +507,8 @@ class Cube2:
 #classe du cube (le perso principal)
 class Cube:
     def __init__(self,tcb,tc,mape,niv,skin_equipe,skins_possedes,diff):
-        self.px=mape.chem[0][0]*tc+rx(1)
-        self.py=mape.chem[0][1]*tc+ry(1)
+        self.px=mape.chem[0][0]*tc+rx(4)
+        self.py=mape.chem[0][1]*tc+ry(4)
         self.tx=int(tcb/3)
         self.ty=int(tcb/3)
         self.cl=(255,255,255)
@@ -612,33 +613,42 @@ class Cube:
             self.rect=pygame.Rect(self.px,self.py,self.tx,self.ty)
             for x in range( int((self.px)/tc)-2 , int((self.px)/tc)+2 ):
                 for y in range( int((self.py)/tc)-2 , int((self.py)/tc)+2 ):
-                    if x >= 0 and x < mape.tx and y >= 0 and y < mape.ty and self.rect.colliderect( pygame.Rect(x*tc,y*tc,tc,tc) ):
+                    mr=pygame.Rect(x*tc,y*tc,tc,tc)
+                    if x >= 0 and x < mape.tx and y >= 0 and y < mape.ty and self.rect.colliderect( mr ):
                         if mape.mape[x,y]==1 and diff>0: self.vie=0
-                        else:
-                            #TODO : collisions avec le mur
-                            pass
+                        elif diff==0:
+                            if mr.collidepoint(self.rect.midright): self.px=(x+1)*tc
+                            elif mr.collidepoint(self.rect.midleft):  self.px=x*tc-self.tx
+                            if mr.collidepoint(self.rect.midtop): self.py=(y+1)*tc
+                            elif mr.collidepoint(self.rect.midbottom):           self.py=y*tc-self.ty
                         if mape.mape[x,y]==2 and mape.p1: self.vie-=50
                         if mape.fin==[x,y]: return True
             for cle in liste_cles:
                 if self.rect.colliderect( cle.rect ):
                     self.cles.append( cle )
                     del( liste_cles[liste_cles.index(cle)])
-            if self.px<0:
-                self.vie=0
-                self.px-=self.vitx
-                self.py-=self.vity
-            if self.px+self.tx>mape.tx*tc:
-                self.vie=0
-                self.px-=self.vitx
-                self.py-=self.vity
-            if self.py<0:
-                self.vie=0
-                self.px-=self.vitx
-                self.py-=self.vity
-            if self.py+self.ty>mape.ty*tc:
-                self.vie=0
-                self.px-=self.vitx
-                self.py-=self.vity
+            if diff>0:
+                if self.px<0:
+                    self.vie=0
+                    self.px-=self.vitx
+                    self.py-=self.vity
+                if self.px+self.tx>mape.tx*tc:
+                    self.vie=0
+                    self.px-=self.vitx
+                    self.py-=self.vity
+                if self.py<0:
+                    self.vie=0
+                    self.px-=self.vitx
+                    self.py-=self.vity
+                if self.py+self.ty>mape.ty*tc:
+                    self.vie=0
+                    self.px-=self.vitx
+                    self.py-=self.vity
+            else:
+                if self.px<0: self.px=0
+                elif self.px+self.tx>mape.tx*tc: self.px=mape.tx*tc-self.tx
+                if self.py<0: self.py=0
+                elif self.py+self.ty>mape.ty*tc: self.py=mape.ty*tc-self.ty
             if cube2.pbg and self.rect.colliderect(cube2.rect):
                 self.vie-=2
             #physique
@@ -1200,13 +1210,17 @@ def aff_menu(men,skin_equipe,skins_possedes,ps,an,tex,tey,fullscreen,acchardware
         if acchardware: cl=(0,150,0)
         bst[1]=pygame.draw.rect( fenetre, cl , (rx(50),ry(330),rx(50),rx(50)) , 0)
         fenetre.blit( font3.render("accelerated hardware",True,(255,255,255)), [rx(120),ry(340)]) 
+        #
         cl=(150,0,0)
         if doublebuf: cl=(0,150,0)
         bst[2]=pygame.draw.rect( fenetre, cl , (rx(50),ry(410),rx(50),rx(50)) , 0)
         fenetre.blit( font3.render("double buff",True,(255,255,255)), [rx(120),ry(420)])
+        #
+        cl=(150,0,0)
         if couleurs_yeux: cl=(0,150,0)
         bst[5]=pygame.draw.rect( fenetre, cl , (rx(50),ry(475),rx(50),rx(50)) , 0)
         fenetre.blit( font3.render("Couleurs plus douces pour les yeux",True,(255,255,255)), [rx(120),ry(480)]) 
+        #
         fenetre.blit( font3.render("résolution de la fenetre :",True,(255,255,255)), [rx(170),ry(40)])
         bst[3]=pygame.draw.rect( fenetre, (50,50,50), (rx(100),ry(100),rx(50),ry(50)) , 0)
         fenetre.blit( font3.render("<",True,(255,255,255)), [rx(110),ry(110)])
@@ -1488,6 +1502,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                             else: tex,tey=mtex,mtey
                         elif di==1: acchardware=not acchardware
                         elif di==2: doublebuf=not doublebuf
+                        elif di==5: couleurs_yeux=not couleurs_yeux
                         elif di==3:
                             d=float(mtex/tex)+0.5
                             if d > 3: d=3
@@ -1496,8 +1511,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                             d=float(mtex/tex)-0.5
                             if d < 1: d=1
                             tex,tey=int(mtex/d),int(mtey/d)
-                        if di==5:
-                            couleurs_yeux=not couleurs_yeux
+                        
                         
                 for b in btc:
                     if b!=None and b.collidepoint(pos):
