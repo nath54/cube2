@@ -616,11 +616,19 @@ class Cube:
                     mr=pygame.Rect(x*tc,y*tc,tc,tc)
                     if x >= 0 and x < mape.tx and y >= 0 and y < mape.ty and self.rect.colliderect( mr ):
                         if mape.mape[x,y]==1 and diff>0: self.vie=0
-                        elif diff==0:
-                            if mr.collidepoint(self.rect.midright): self.px=(x+1)*tc
-                            elif mr.collidepoint(self.rect.midleft):  self.px=x*tc-self.tx
-                            if mr.collidepoint(self.rect.midtop): self.py=(y+1)*tc
-                            elif mr.collidepoint(self.rect.midbottom):           self.py=y*tc-self.ty
+                        elif mape.mape[x,y]==1 and diff==0:
+                            if mr.collidepoint(self.rect.midright):
+                                self.px=x*tc-self.tx
+                                self.vitx=0
+                            elif mr.collidepoint(self.rect.midleft): 
+                                self.vitx=0
+                                self.px=(x+1)*tc+1
+                            if mr.collidepoint(self.rect.midbottom):
+                                self.py=y*tc-self.ty
+                                self.vity=0
+                            elif mr.collidepoint(self.rect.midtop):
+                                self.py=(y+1)*tc+1
+                                self.vity=0
                         if mape.mape[x,y]==2 and mape.p1: self.vie-=50
                         if mape.fin==[x,y]: return True
             for cle in liste_cles:
@@ -1522,8 +1530,8 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                 for b in btd:
                     if b!=None and b.collidepoint(pos):
                         di=btd.index(b)
-                        if di!=0:
-                            diff=di
+                        #if di!=0:
+                        diff=di
                 needtoaff=True
                 save(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,succes,couleurs_yeux,controls,diff)
 
