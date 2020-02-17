@@ -459,6 +459,7 @@ class Mape:
         self.dp1=time.time()
         self.tp1=1.5
         self.dif=dif
+        self.img_sceau=None
     def update(self):
         if time.time()-self.dp1>=self.tp1:
             self.p1=not self.p1
@@ -832,17 +833,19 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
     for x in range(int((-cam[0])/tc),int((-cam[0]+tex)/tc+1)):
         for y in range(int((-cam[1])/tc),int((-cam[1]+tey)/tc+1)):
             if x>=0 and x < mape.tx and y >= 0 and y < mape.ty and mape.mape[x,y]!=1:
+                img=None
                 if mape.mape[x,y]==0:
                     cl=mape.cls
                     if mape.fin==[x,y]:
+                        cl=(0,0,0)
                         if len(liste_cles)>0:
-                            cl=(70,70,70)
-                        else:
-                            cl=(0,0,0)
+                            img=mape.img_sceau
                 if mape.mape[x,y]==2: #piege clignotant
                     if mape.p1: cl=(255,0,0)
                     else: cl=(0,255,0)
                 pygame.draw.rect(fenetre,cl,(cam[0]+x*tc,cam[1]+y*tc,tc,tc),0)
+                if img!=None:
+                    fenetre.blit( img , [cam[0]+x*tc,cam[1]+y*tc] )
                 if niv <= 10 and x >= 1 and mape.mape[x-1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc-rx(2),cam[1]+y*tc,rx(2),tc),0)
                 try:
                     if niv <= 10 and x <= mape.tx-2 and mape.mape[x+1,y]==1: pygame.draw.rect(fenetre,(255,0,0),(cam[0]+x*tc+tc,cam[1]+y*tc,rx(2),tc),0)
@@ -898,6 +901,7 @@ def aff(cube,mape,cam,tc,fps,niv,morts,cube2,tps1,tpstot,liste_succes,liste_cles
 def cniv(tcb,niv,skin_equipe,skins_possedes,couleurs_yeux,diff):
     tc=int(tcb/3+float((150-niv)/150.*(tcb/2*1.3)))
     mape=Mape(niv,diff)
+    mape.img_sceau=pygame.transform.scale( pygame.image.load(dimg+"sceau.png") , [tc,tc] )
     cube=Cube(tcb,tc,mape,niv,skin_equipe,skins_possedes,diff)
     cube2=Cube2(cube,diff)
     cube2.tpbg=1+((30-mape.dif)/30*1)
@@ -1524,9 +1528,9 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                 for b in btc:
                     if b!=None and b.collidepoint(pos):
                         di=btc.index(b)
-                        tc=wait_key()
+                        tk=wait_key()
                         if tc!=None:
-                            controls[di]=tc
+                            controls[di]=tk
                 for b in btd:
                     if b!=None and b.collidepoint(pos):
                         di=btd.index(b)
