@@ -1529,7 +1529,7 @@ def menu(skin_equipe,skins_possedes,tex,tey,fullscreen,acchardware,doublebuf,suc
                     if b!=None and b.collidepoint(pos):
                         di=btc.index(b)
                         tk=wait_key()
-                        if tc!=None:
+                        if tk!=None:
                             controls[di]=tk
                 for b in btd:
                     if b!=None and b.collidepoint(pos):
